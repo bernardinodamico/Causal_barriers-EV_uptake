@@ -33,8 +33,9 @@ class DataFusion():
         self.ds_obsrv_vars.loc[:, 'V_3'] = scottish_household_survey_ds.loc[:, 'totads'] # total number of adult people in the household
         self.ds_obsrv_vars.loc[:, 'V_4'] = scottish_household_survey_ds.loc[:, 'totkids'] # total number of children in the household
         self.ds_obsrv_vars.loc[:, 'V_5'] = scottish_household_survey_ds.loc[:, 'hhtype_new'] # household composition
+        self.ds_obsrv_vars.loc[:, 'V_6'] = scottish_household_survey_ds.loc[:, 'SHS_2CLA'] # household urban/rural classification
         
-        
+        '''add off-street parking and the other veriables'''
         
         self.ds_obsrv_vars.loc[:, 'council'] = scottish_household_survey_ds.loc[:, 'council'] # local authority where the household resides
         
