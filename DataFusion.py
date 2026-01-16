@@ -29,6 +29,16 @@ class DataFusion():
         
         self.ds_obsrv_vars.loc[:, 'Y'] = scottish_household_survey_ds.loc[:, 'gpawr2c'] # whether random adult in household considers buying (or already has) a plug-in electric car or van
         self.ds_obsrv_vars.loc[:, 'V_1'] = scottish_household_survey_ds.loc[:, 'tothinc'] # annual net household income [£]
+        self.ds_obsrv_vars.loc[:, 'V_2'] = scottish_household_survey_ds.loc[:, 'NUMCARS_NEW'] # number of cars available for private use by members of household
+        self.ds_obsrv_vars.loc[:, 'V_3'] = scottish_household_survey_ds.loc[:, 'totads'] # total number of adult people in the household
+        self.ds_obsrv_vars.loc[:, 'V_4'] = scottish_household_survey_ds.loc[:, 'totkids'] # total number of children in the household
+        self.ds_obsrv_vars.loc[:, 'V_5'] = scottish_household_survey_ds.loc[:, 'hhtype_new'] # household composition
+        
+        
+        
+        self.ds_obsrv_vars.loc[:, 'council'] = scottish_household_survey_ds.loc[:, 'council'] # local authority where the household resides
+        
+        
         
         if subset_only is True:
             self.ds_obsrv_vars = self.ds_obsrv_vars[:how_many] # only keep first n rows (n=how_many)
