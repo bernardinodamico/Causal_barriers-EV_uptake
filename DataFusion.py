@@ -26,25 +26,58 @@ class DataFusion():
         self.ds_obsrv_vars = pd.DataFrame()
         
         scottish_household_survey_ds = pd.read_excel(io=os.path.join(os.path.dirname(__file__), r"DATA\RAW\Scottish_Household_Survey_2022.xlsx"), sheet_name=f"shs2022_social_public")
+        scottish_house_condition_ds = pd.read_excel(io=os.path.join(os.path.dirname(__file__), r"DATA\RAW\Scottish_House_Condition_Survey_2022.xlsx"), sheet_name=f"shcs2022_dataset")
         
-        self.ds_obsrv_vars.loc[:, 'Y'] = scottish_household_survey_ds.loc[:, 'gpawr2c'] # whether random adult in household considers buying (or already has) a plug-in electric car or van
-        self.ds_obsrv_vars.loc[:, 'V_1'] = scottish_household_survey_ds.loc[:, 'tothinc'] # annual net household income [£]
-        self.ds_obsrv_vars.loc[:, 'V_2'] = scottish_household_survey_ds.loc[:, 'NUMCARS_NEW'] # number of cars available for private use by members of household
-        self.ds_obsrv_vars.loc[:, 'V_3'] = scottish_household_survey_ds.loc[:, 'totads'] # total number of adult people in the household
-        self.ds_obsrv_vars.loc[:, 'V_4'] = scottish_household_survey_ds.loc[:, 'totkids'] # total number of children in the household
-        self.ds_obsrv_vars.loc[:, 'V_5'] = scottish_household_survey_ds.loc[:, 'hhtype_new'] # household composition
-        self.ds_obsrv_vars.loc[:, 'V_6'] = scottish_household_survey_ds.loc[:, 'SHS_2CLA'] # household urban/rural classification
+        house_condition_variables = [
+            #'uniqidnew_shs_social',
+            'D10', # 'V_7' parking provision of the dwelling
+            'typdwell', # 'V_8' type of dwelling
+            'C5', # 'V_9' Date of construction of dwelling
+        ]
         
-        '''add off-street parking and the other veriables'''
+        household_variables = [
+            #'UNIQIDNEW',
+            'gpawr2c', # 'Y' whether random adult in household considers buying (or already has) a plug-in electric car or van
+            'tothinc', # 'V_1' annual net household income [£]
+            'NUMCARS_NEW', # 'V_2' number of cars available for private use by members of household
+            'totads', # 'V_3' total number of adult people in the household
+            'totkids', # 'V_4' total number of children in the household
+            'hhtype_new', # 'V_5' household composition
+            'SHS_2CLA', # 'V_6' household urban/rural classification
+            'council', # 'council' local authority where the household resides
+        ]
         
-        self.ds_obsrv_vars.loc[:, 'council'] = scottish_household_survey_ds.loc[:, 'council'] # local authority where the household resides
+
+        self.ds_obsrv_vars = scottish_house_condition_ds[house_condition_variables].merge(
+            scottish_household_survey_ds[household_variables],
+            left_on='uniqidnew_shs_social',
+            right_on='UNIQIDNEW',
+            how='inner'
+            )
         
-        
-        
+
         if subset_only is True:
             self.ds_obsrv_vars = self.ds_obsrv_vars[:how_many] # only keep first n rows (n=how_many)
             
             
+        return
+    
+    def fill_in_home_charging_var(self) -> None:
+        '''
+        Add the variable "Home EV charging feasibility" to the dataset, mapping its values based on the parking provision variable (D10)
+        '''
+        parking_provision_mapping = {
+            1: 'high',
+            2: 'high',
+            3: 'high',
+            4: 'low',
+            5: 'low',
+            6: 'low',
+            7: 'low', 
+        }
+        
+        self.ds_obsrv_vars['home_charging_feas'] = self.ds_obsrv_vars['D10'].map(parking_provision_mapping)
+        
         return
     
     
@@ -64,7 +97,8 @@ def gen_training_dataset():
     combined_ds_obsrv_vars = pd.DataFrame()
 
     
-    dp = DataFusion(subset_only=True, how_many=200)
+    dp = DataFusion(subset_only=False, how_many=200)
+    dp.fill_in_home_charging_var()
     
     combined_ds_obsrv_vars = dp.ds_obsrv_vars
     
@@ -82,3 +116,10 @@ def gen_training_dataset():
 
 
 gen_training_dataset()
+
+
+
+
+
+
+
