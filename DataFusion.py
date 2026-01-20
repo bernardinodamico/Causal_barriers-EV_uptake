@@ -29,7 +29,7 @@ class DataFusion():
         scottish_house_condition_ds = pd.read_excel(io=os.path.join(os.path.dirname(__file__), r"DATA\RAW\Scottish_House_Condition_Survey_2022.xlsx"), sheet_name=f"shcs2022_dataset")
         
         house_condition_variables = [
-            #'uniqidnew_shs_social',
+            'uniqidnew_shs_social',
             'D10', # 'V_7' parking provision of the dwelling
             'D1', # 'V_10' entrance level to dwelling
             'typdwell', # 'V_8' type of dwelling
@@ -37,7 +37,7 @@ class DataFusion():
         ]
         
         household_variables = [
-            #'UNIQIDNEW',
+            'UNIQIDNEW',
             'gpawr2c', # 'Y' whether random adult in household considers buying (or already has) a plug-in electric car or van
             'tothinc', # 'V_1' annual net household income [£]
             'NUMCARS_NEW', # 'V_2' number of cars available for private use by members of household
@@ -45,10 +45,9 @@ class DataFusion():
             'totkids', # 'V_4' total number of children in the household
             'hhtype_new', # 'V_5' household composition
             'SHS_2CLA', # 'V_6' household urban/rural classification
-            'council', # 'council' local authority where the household resides
+            #'council', # 'council' local authority where the household resides
         ]
         
-
         self.ds_obsrv_vars = scottish_house_condition_ds[house_condition_variables].merge(
             scottish_household_survey_ds[household_variables],
             left_on='uniqidnew_shs_social',
@@ -56,12 +55,11 @@ class DataFusion():
             how='inner'
             )
         
-
         if subset_only is True:
             self.ds_obsrv_vars = self.ds_obsrv_vars[:how_many] # only keep first n rows (n=how_many)
-            
-            
+                 
         return
+    
     
     def fill_in_home_charging_var(self) -> None:
         '''
@@ -69,30 +67,44 @@ class DataFusion():
         on the parking provision variable (D10) and Entrance level to dwelling (D1)
         '''
         
-        
         conditions = [
-            (self.ds_obsrv_vars['D10'].isin([1, 2, 3])) & (self.ds_obsrv_vars['D1'].isin([0, 7])), # feasible
-            (self.ds_obsrv_vars['D10'].isin([1, 2, 3])) & (self.ds_obsrv_vars['D1'].isin([0, 7])), 
-            (self.ds_obsrv_vars['D10'].isin([4, 5, 6, 7]))
+            (self.ds_obsrv_vars['D10'].isin([1, 2, 3])),                                                    # feasible
+            (self.ds_obsrv_vars['D10'].isin([4])),                                                          # not feasible
+            (self.ds_obsrv_vars['D10'].isin([5])) & (self.ds_obsrv_vars['D1'].isin([0, 7])),                # feasible
+            (self.ds_obsrv_vars['D10'].isin([5])) & (self.ds_obsrv_vars['D1'].isin([1, 2, 3, 4, 5, 6])),    # not feasible
+            (self.ds_obsrv_vars['D10'].isin([6,7]))                                                         # not feasible
         ]
         
+        choices = [
+                'true',   
+                'false', 
+                'true',
+                'false',  
+                'false' 
+            ]
         
-        
-        parking_provision_mapping = {
-            1: 'high',
-            2: 'high',
-            3: 'high',
-            4: 'low',
-            5: 'low',
-            6: 'low',
-            7: 'low', 
-        }
-        
-        self.ds_obsrv_vars['home_charging_feas'] = self.ds_obsrv_vars['D10'].map(parking_provision_mapping)
+        self.ds_obsrv_vars['home_charging'] = np.select(conditions, choices, default=pd.NA)
         
         return
     
     
+    def clean_up(self) -> None:
+        self.ds_obsrv_vars = self.ds_obsrv_vars.dropna() # removes rows with empy cells
+        self.ds_obsrv_vars = self.ds_obsrv_vars.drop(columns=['UNIQIDNEW', 'uniqidnew_shs_social']) # removes ID columns
+        
+        self.ds_obsrv_vars = (self.ds_obsrv_vars.loc[self.ds_obsrv_vars['D10'] != 8].reset_index(drop=True)) # removes rows where D10 = 8
+        self.ds_obsrv_vars = (self.ds_obsrv_vars.loc[self.ds_obsrv_vars['D10'] != 9].reset_index(drop=True)) # removes rows where D10 = 9
+        
+        self.ds_obsrv_vars = (self.ds_obsrv_vars.loc[self.ds_obsrv_vars['D1'] != 8].reset_index(drop=True)) # removes rows where D1 = 8
+        self.ds_obsrv_vars = (self.ds_obsrv_vars.loc[self.ds_obsrv_vars['D1'] != 9].reset_index(drop=True)) # removes rows where D1 = 9
+        
+        self.ds_obsrv_vars = (self.ds_obsrv_vars.loc[self.ds_obsrv_vars['C5'] != 9].reset_index(drop=True)) # removes rows where C5 = 9
+        
+        self.ds_obsrv_vars = (self.ds_obsrv_vars.loc[self.ds_obsrv_vars['gpawr2c'] != 6.0].reset_index(drop=True)) # removes rows where gpawr2c = 6.0
+        self.ds_obsrv_vars = (self.ds_obsrv_vars.loc[self.ds_obsrv_vars['gpawr2c'] != 6].reset_index(drop=True)) # removes rows where gpawr2c = 6
+        
+        
+        return
     
 
 
@@ -111,6 +123,7 @@ def gen_training_dataset():
     
     dp = DataFusion(subset_only=False, how_many=200)
     dp.fill_in_home_charging_var()
+    dp.clean_up()
     
     combined_ds_obsrv_vars = dp.ds_obsrv_vars
     
