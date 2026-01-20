@@ -31,6 +31,7 @@ class DataFusion():
         house_condition_variables = [
             #'uniqidnew_shs_social',
             'D10', # 'V_7' parking provision of the dwelling
+            'D1', # 'V_10' entrance level to dwelling
             'typdwell', # 'V_8' type of dwelling
             'C5', # 'V_9' Date of construction of dwelling
         ]
@@ -64,8 +65,19 @@ class DataFusion():
     
     def fill_in_home_charging_var(self) -> None:
         '''
-        Add the variable "Home EV charging feasibility" to the dataset, mapping its values based on the parking provision variable (D10)
+        Add the variable "Home EV charging feasibility" to the dataset, mapping its values based 
+        on the parking provision variable (D10) and Entrance level to dwelling (D1)
         '''
+        
+        
+        conditions = [
+            (self.ds_obsrv_vars['D10'].isin([1, 2, 3])) & (self.ds_obsrv_vars['D1'].isin([0, 7])), # feasible
+            (self.ds_obsrv_vars['D10'].isin([1, 2, 3])) & (self.ds_obsrv_vars['D1'].isin([0, 7])), 
+            (self.ds_obsrv_vars['D10'].isin([4, 5, 6, 7]))
+        ]
+        
+        
+        
         parking_provision_mapping = {
             1: 'high',
             2: 'high',
