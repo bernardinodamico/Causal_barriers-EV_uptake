@@ -30,10 +30,10 @@ class DataFusion():
         
         house_condition_variables = [
             'uniqidnew_shs_social',
-            'D10', # 'V_7' parking provision of the dwelling
-            'D1', # 'V_10' entrance level to dwelling
+            'D10', # 'V_7' parking provision 
             'typdwell', # 'V_8' type of dwelling
             'C5', # 'V_9' Date of construction of dwelling
+            'D1', # 'V_10' entrance level to dwelling
         ]
         
         household_variables = [
@@ -63,27 +63,25 @@ class DataFusion():
     
     def fill_in_home_charging_var(self) -> None:
         '''
-        Add the variable "Home EV charging feasibility" to the dataset, mapping its values based 
-        on the parking provision variable (D10) and Entrance level to dwelling (D1)
+        Add the variable "Can charge from home" (V_11) to the dataset, mapping its values based 
+        on the Parking Provision variable D10 (6-fold version) and Entrance level to dwelling (D1)
         '''
         
         conditions = [
-            (self.ds_obsrv_vars['D10'].isin([1, 2, 3])),                                                    # feasible
-            (self.ds_obsrv_vars['D10'].isin([4])),                                                          # not feasible
-            (self.ds_obsrv_vars['D10'].isin([5])) & (self.ds_obsrv_vars['D1'].isin([0, 7])),                # feasible
-            (self.ds_obsrv_vars['D10'].isin([5])) & (self.ds_obsrv_vars['D1'].isin([1, 2, 3, 4, 5, 6])),    # not feasible
-            (self.ds_obsrv_vars['D10'].isin([6,7]))                                                         # not feasible
+            (self.ds_obsrv_vars['D10'].isin([1, 2, 3, 4])),                                                 # true
+            (self.ds_obsrv_vars['D10'].isin([5])) & (self.ds_obsrv_vars['D1'].isin([0, 7])),                # true
+            (self.ds_obsrv_vars['D10'].isin([5])) & (self.ds_obsrv_vars['D1'].isin([1, 2, 3, 4, 5, 6])),    # false
+            (self.ds_obsrv_vars['D10'].isin([6]))                                                           # false
         ]
         
         choices = [
-                'true',   
-                'false', 
-                'true',
-                'false',  
-                'false' 
+                '1',   
+                '1', 
+                '2',  
+                '2' 
             ]
         
-        self.ds_obsrv_vars['home_charging'] = np.select(conditions, choices, default=pd.NA)
+        self.ds_obsrv_vars['can_charge_from_home'] = np.select(conditions, choices, default=pd.NA)
         
         return
     
@@ -92,6 +90,7 @@ class DataFusion():
         self.ds_obsrv_vars = self.ds_obsrv_vars.dropna() # removes rows with empy cells
         self.ds_obsrv_vars = self.ds_obsrv_vars.drop(columns=['UNIQIDNEW', 'uniqidnew_shs_social']) # removes ID columns
         
+        self.ds_obsrv_vars = (self.ds_obsrv_vars.loc[self.ds_obsrv_vars['D10'] != 7].reset_index(drop=True)) # removes rows where D10 = 7
         self.ds_obsrv_vars = (self.ds_obsrv_vars.loc[self.ds_obsrv_vars['D10'] != 8].reset_index(drop=True)) # removes rows where D10 = 8
         self.ds_obsrv_vars = (self.ds_obsrv_vars.loc[self.ds_obsrv_vars['D10'] != 9].reset_index(drop=True)) # removes rows where D10 = 9
         
@@ -100,14 +99,35 @@ class DataFusion():
         
         self.ds_obsrv_vars = (self.ds_obsrv_vars.loc[self.ds_obsrv_vars['C5'] != 9].reset_index(drop=True)) # removes rows where C5 = 9
         
-        self.ds_obsrv_vars = (self.ds_obsrv_vars.loc[self.ds_obsrv_vars['gpawr2c'] != 6.0].reset_index(drop=True)) # removes rows where gpawr2c = 6.0
+        self.ds_obsrv_vars['D10'] = self.ds_obsrv_vars['D10'].astype(int)
+        self.ds_obsrv_vars['gpawr2c'] = self.ds_obsrv_vars['gpawr2c'].astype(int)
+        self.ds_obsrv_vars['tothinc'] = self.ds_obsrv_vars['tothinc'].astype(int)
+        self.ds_obsrv_vars['can_charge_from_home'] = self.ds_obsrv_vars['can_charge_from_home'].astype(int)
+        
         self.ds_obsrv_vars = (self.ds_obsrv_vars.loc[self.ds_obsrv_vars['gpawr2c'] != 6].reset_index(drop=True)) # removes rows where gpawr2c = 6
         
         
         return
-    
 
 
+    def parking_provision_classification(self, classification: str) -> None:
+        if classification == '6-fold':
+            pass
+        elif classification == '2-fold':
+            conditions = [
+            (self.ds_obsrv_vars['D10'].isin([1, 2, 3, 4])), # off_street
+            (self.ds_obsrv_vars['D10'].isin([5, 6]))        # on_street
+            ]
+            choices = ['1', '2']
+            
+            self.ds_obsrv_vars['D10'] = np.select(conditions, choices, default=pd.NA)
+            self.ds_obsrv_vars['D10'] = self.ds_obsrv_vars['D10'].astype(int)
+        else:
+            raise ValueError(f"Invalid argument for classification = '{classification}'. Expected: '6-fold' or '2-fold'.")    
+        return
+
+
+ 
  
     
 '''
@@ -124,6 +144,7 @@ def gen_training_dataset():
     dp = DataFusion(subset_only=False, how_many=200)
     dp.fill_in_home_charging_var()
     dp.clean_up()
+    dp.parking_provision_classification(classification='2-fold')
     
     combined_ds_obsrv_vars = dp.ds_obsrv_vars
     
