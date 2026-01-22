@@ -124,22 +124,6 @@ class VariableValues():
             6: "post-2002"
         }
         
-        # entrance level to dwelling
-        V_10_values = {
-            0: "Ground",
-            1: "First",
-            2: "Second",
-            3: "Third",
-            4: "Fourth",
-            5: "Fifth",
-            6: "Six or above"
-        }
-        
-        # Can charge from home
-        V_11_values = {
-            1: "true",
-            2: "false"
-        }
         
         # Whether random adult in household considers buying (or already has) a plug-in electric car or van
         Y_values = {
@@ -167,8 +151,6 @@ class VariableValues():
             'V_7': V_7_values,
             'V_8': V_8_values,
             'V_9': V_9_values,
-            'V_10': V_10_values,
-            'V_11': V_11_values,
         }
 
         self.Variables_dic = Variables_dic
