@@ -124,6 +124,42 @@ class VariableValues():
             6: "post-2002"
         }
         
+        # Local authority
+        V_10_values = {
+            1: "South Ayrshire",
+            2: "South Lanarkshire",
+            3: "Stirling",
+            4: "West Dumbartonshire",
+            5: "West Lothian",
+            6: "Na h-Eileanan Siar",
+            'A': "Aberdeen City",
+            'B': "Aberdeenshire",
+            'C': "Angus",
+            'D': "Argyll and Bute",
+            'E': "Scottish Borders",
+            'F': "Clackmannanshire",
+            'G': "Dumfries and Galloway",
+            'H': "Dundee City",
+            'I': "East Ayrshire",
+            'J': "East Dumbartonshire",
+            'K': "East Lothian",
+            'L': "East Renfrewshire",
+            'M': "City of Edinburgh",
+            'N': "Falkirk",
+            'O': "Fife",
+            'P': "Glasgow City",
+            'Q': "Highland",
+            'R': "Inverclyde",
+            'S': "Midlothian",
+            'T': "Moray",
+            'U': "North Ayrshire",
+            'V': "North Lanarkshire",
+            'W': "Orkney Islands",
+            'X': "Perth and Kinross",
+            'Y': "Renfrewshire",
+            'Z': "Shetland Islands"
+        }
+        
         
         # Whether random adult in household considers buying (or already has) a plug-in electric car or van
         Y_values = {
@@ -151,6 +187,7 @@ class VariableValues():
             'V_7': V_7_values,
             'V_8': V_8_values,
             'V_9': V_9_values,
+            'V_10': V_10_values,
         }
 
         self.Variables_dic = Variables_dic

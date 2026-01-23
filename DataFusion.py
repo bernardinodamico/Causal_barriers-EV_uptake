@@ -44,7 +44,7 @@ class DataFusion():
             'totkids', # 'V_4' total number of children in the household
             'hhtype_new', # 'V_5' household composition
             'SHS_2CLA', # 'V_6' household urban/rural classification
-            #'council', # 'council' local authority where the household resides
+            'council', # 'V_10' local authority where the household resides
         ]
         
         self.ds_obsrv_vars = scottish_house_condition_ds[house_condition_variables].merge(
@@ -97,7 +97,10 @@ class DataFusion():
         return
 
 
- 
+    def fill_in_infrastruct_density(self) -> None:
+        
+
+        return
  
     
 '''
