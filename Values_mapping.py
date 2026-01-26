@@ -126,12 +126,12 @@ class VariableValues():
         
         # Local authority
         V_10_values = {
-            1: "South Ayrshire",
-            2: "South Lanarkshire",
-            3: "Stirling",
-            4: "West Dumbartonshire",
-            5: "West Lothian",
-            6: "Na h-Eileanan Siar",
+            '1': "South Ayrshire",
+            '2': "South Lanarkshire",
+            '3': "Stirling",
+            '4': "West Dunbartonshire",
+            '5': "West Lothian",
+            '6': "Na h-Eileanan Siar",
             'A': "Aberdeen City",
             'B': "Aberdeenshire",
             'C': "Angus",
@@ -141,7 +141,7 @@ class VariableValues():
             'G': "Dumfries and Galloway",
             'H': "Dundee City",
             'I': "East Ayrshire",
-            'J': "East Dumbartonshire",
+            'J': "East Dunbartonshire",
             'K': "East Lothian",
             'L': "East Renfrewshire",
             'M': "City of Edinburgh",
@@ -160,6 +160,36 @@ class VariableValues():
             'Z': "Shetland Islands"
         }
         
+        # LA's workplace charging infrastructure density (No of workplace installs per 100'000 people)
+        V_11_values = {
+            1: "0-20",
+            2: "21-40",
+            3: "41-60", 
+            4: "61-80",
+            5: "> 80"
+        }
+        
+        # LA's public charging infrastructure density (No of public installs per 100'000 people)
+        V_12_values = {
+            1: "0-50",
+            2: "51-100",
+            3: "101-150", 
+            4: "151-200",
+            5: "> 200"
+        }
+        
+        # Hosehold working status
+        V_13_values = {
+            1: "One or more working adults",
+            2: "None working",
+        }
+        
+        # tenure
+        V_14_values = {
+            1: "Owned (outright or mortgage)",
+            2: "Part mortgage, part rent",
+            3: "Rented (LA, Co-op, private landlord)",
+        }
         
         # Whether random adult in household considers buying (or already has) a plug-in electric car or van
         Y_values = {
@@ -188,6 +218,10 @@ class VariableValues():
             'V_8': V_8_values,
             'V_9': V_9_values,
             'V_10': V_10_values,
+            'V_11': V_11_values,
+            'V_12': V_12_values,
+            'V_13': V_13_values,
+            'V_14': V_14_values
         }
 
         self.Variables_dic = Variables_dic
