@@ -46,7 +46,7 @@ print("--- CAUSAL DISCOVERY RESULTS ---")
 
 # 1. Get Directed Arcs (->)
 for tail, head in learnt_mixed_graph.arcs():
-    print(f"ARC: {dataset.columns[tail]} -> {dataset.columns[head]}")
+    print(f"ARC: {dataset.columns[tail]} --> {dataset.columns[head]}")
 
 # 2. Get Undirected Edges (-)
 for u, v in learnt_mixed_graph.edges():
@@ -61,7 +61,7 @@ if latents:
     for lat in latents:
         # For gum.Arc, use .tail and .head (attributes, not methods)
         u, v = lat[0], lat[1]
-        print(f"BIDIRECTIONAL (Latent): {dataset.columns[u]} <-> {dataset.columns[v]}")
+        print(f"BIDIRECTIONAL (Latent): {dataset.columns[u]} <--> {dataset.columns[v]}")
 else:
     print("\nNo Bidirected Arcs (Latents) detected.")
     
