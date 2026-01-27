@@ -2,13 +2,21 @@ import pyAgrum as gum
 import pyAgrum.lib.image as gimg
 import pandas as pd
 import os
-os.environ["PATH"] += r";C:\Program Files\Graphviz\bin"
 
 
 
+
+
+
+
+
+
+
+
+
+  
 csv_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "DATA", "processed_dataset.csv")
 dataset = pd.read_csv(filepath_or_buffer=csv_path, sep=",")
-
 
 # 1. Initialize the learner with your dataframe
 learner = gum.BNLearner(dataset)
@@ -26,27 +34,50 @@ learner.useNMLCorrection() # Normalized Maximum Likelihood (NML) correction
 
 # Based on prior knowledge, and arch may be forbidden 
 # either because it is wrongly oriented cauaslly, or 
-# because the caputed correlation is to be expained in 
+# because the captured correlation is to be expained in 
 # terms of a confounder (latent or observed).
-learner.addForbiddenArc('Y', 'V_7') 
-learner.addForbiddenArc('Y', 'V_7') 
+for i in range(1, 15):
+    # EV ownership cannot cause any other variable in the dataset
+    learner.addForbiddenArc('Y', f'V_{i}')
+    # Root nodes cannot be caused by other variables in the dataset
+    root_nodes = ['V_3', 'V_4', 'V_9', 'V_10', 'V_13']
+    for r_node in root_nodes:
+        if i != r_node:
+            learner.addForbiddenArc(f'V_{i}', r_node)
+            #print(f'forbidden: V_{i} -> {r_node}')
 
+
+learner.addForbiddenArc('V_14', 'V_1')
+learner.addForbiddenArc('V_9', 'V_2')
+learner.addForbiddenArc('V_14', 'V_2')
+learner.addForbiddenArc('V_2', 'V_14')
+learner.addForbiddenArc('V_2', 'V_8')
+learner.addForbiddenArc('V_8', 'V_2')
+learner.addForbiddenArc('V_2', 'V_5')
+learner.addForbiddenArc('V_9', 'V_1')
 # You would force a mandatory arc because of domain 
 # knowledge (such as a known physical law or a temporal 
 # sequence) that a causal relationship exists.
-learner.addMandatoryArc('V_7', 'Y')
+learner.addMandatoryArc('V_2', 'Y')
+learner.addForbiddenArc('V_6', 'V_2')
+#learner.addMandatoryArc('V_14', 'Y')
+#learner.addMandatoryArc('V_1', 'Y')
+
+
 
 # 5. Learn the graph
-learnt_mixed_graph = learner.learnPDAG() #learnEssentialGraph() #
+learnt_mixed_graph = learner.learnPDAG()
 
 
 
 # 6. Visualize
+print(" ")
 print("--- CAUSAL DISCOVERY RESULTS ---")
 
 # 1. Get Directed Arcs (->)
 for tail, head in learnt_mixed_graph.arcs():
-    print(f"ARC: {dataset.columns[tail]} --> {dataset.columns[head]}")
+    mi = learner.correctedMutualInformation(tail, head)
+    print(f"ARC: {dataset.columns[tail]} --> {dataset.columns[head]} | MI = {round(mi, 5)}")
 
 # 2. Get Undirected Edges (-)
 for u, v in learnt_mixed_graph.edges():
