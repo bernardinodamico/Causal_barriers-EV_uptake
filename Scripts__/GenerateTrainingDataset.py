@@ -9,7 +9,7 @@ Below is a function instantiating the DataFusion class. It builds the dataset
 for training the model parameters (and learning the graph).
 '''
 
-def gen_training_dataset(resampling: bool, sample_multiplier: int = 20):
+def gen_training_dataset(weighted_resampling: bool, parking_prov_folds: str, sample_multiplier: float):
     
     '''
     param resampling: if true, the dataset is resampled using weights
@@ -24,12 +24,12 @@ def gen_training_dataset(resampling: bool, sample_multiplier: int = 20):
     
     dp = DataFusion(subset_only=False, how_many=200)
     dp.clean_up()
-    dp.parking_provision_classification(classification='2-fold')
+    dp.parking_provision_classification(classification=parking_prov_folds)
     dp.working_status_classification()
     dp.tenure_classification()
     dp.fill_in_infrastruct_density()
-    if resampling is True:
-        dp.weighted_resampling(sample_size=len(dp.ds_obsrv_vars)* sample_multiplier)
+    if weighted_resampling is True:
+        dp.weighted_resampling(sample_size=int(len(dp.ds_obsrv_vars) * sample_multiplier))
     dp.rename_reorder_vars()
     
     combined_ds_obsrv_vars = dp.ds_obsrv_vars
@@ -52,4 +52,4 @@ def gen_training_dataset(resampling: bool, sample_multiplier: int = 20):
 
 
 if __name__ == "__main__":
-    gen_training_dataset(resampling=False, sample_multiplier=5)
+    gen_training_dataset(weighted_resampling=True, sample_multiplier=1.0, parking_prov_folds='2-fold')

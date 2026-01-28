@@ -36,33 +36,46 @@ learner.useNMLCorrection() # Normalized Maximum Likelihood (NML) correction
 # either because it is wrongly oriented cauaslly, or 
 # because the captured correlation is to be expained in 
 # terms of a confounder (latent or observed).
-for i in range(1, 15):
+#for i in range(1, 15):
     # EV ownership cannot cause any other variable in the dataset
-    learner.addForbiddenArc('Y', f'V_{i}')
+    #learner.addForbiddenArc('Y', f'V_{i}')
+
+    
     # Root nodes cannot be caused by other variables in the dataset
-    root_nodes = ['V_3', 'V_4', 'V_9', 'V_10', 'V_13']
-    for r_node in root_nodes:
-        if i != r_node:
-            learner.addForbiddenArc(f'V_{i}', r_node)
-            #print(f'forbidden: V_{i} -> {r_node}')
+    # these nodes below are assumed as root.
+    #root_nodes = ['V_3', 'V_4', 'V_9', 'V_10', 'V_13']
+    #for r_node in root_nodes:
+    #    if i != r_node:
+    #        learner.addForbiddenArc(f'V_{i}', r_node)
+    #        print(f'forbidden: V_{i} -> {r_node}')
 
 
-learner.addForbiddenArc('V_14', 'V_1')
-learner.addForbiddenArc('V_9', 'V_2')
-learner.addForbiddenArc('V_14', 'V_2')
-learner.addForbiddenArc('V_2', 'V_14')
+learner.addForbiddenArc('V_2', 'V_3')
+
+learner.addForbiddenArc('V_13', 'V_10')
+
+learner.addForbiddenArc('V_2', 'V_7')
+
+learner.addForbiddenArc('V_5', 'V_4')
+learner.addForbiddenArc('V_5', 'V_3')
+
+#learner.addForbiddenArc('V_4', 'V_3')
+#learner.addForbiddenArc('V_3', 'V_4')
+
+#learner.addForbiddenArc('V_8', 'V_2')
 learner.addForbiddenArc('V_2', 'V_8')
-learner.addForbiddenArc('V_8', 'V_2')
-learner.addForbiddenArc('V_2', 'V_5')
-learner.addForbiddenArc('V_9', 'V_1')
+
+learner.addForbiddenArc('V_7', 'V_8')
+
+
 # You would force a mandatory arc because of domain 
 # knowledge (such as a known physical law or a temporal 
 # sequence) that a causal relationship exists.
-learner.addMandatoryArc('V_2', 'Y')
-learner.addForbiddenArc('V_6', 'V_2')
-#learner.addMandatoryArc('V_14', 'Y')
-#learner.addMandatoryArc('V_1', 'Y')
 
+learner.addMandatoryArc('V_1', 'Y')
+#learner.addMandatoryArc('V_1', 'V_2')
+learner.addMandatoryArc('V_7', 'Y')
+learner.addMandatoryArc('V_14', 'Y')
 
 
 # 5. Learn the graph
