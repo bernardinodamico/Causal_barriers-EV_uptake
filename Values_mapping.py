@@ -125,7 +125,7 @@ class VariableValues():
         }
         
         # Local authority
-        V_10_values = {
+        LA_values = {
             '1': "South Ayrshire",
             '2': "South Lanarkshire",
             '3': "Stirling",
@@ -161,7 +161,7 @@ class VariableValues():
         }
         
         # LA's workplace charging infrastructure density (No of workplace installs per 100'000 people)
-        V_11_values = {
+        V_10_values = {
             1: "0-20",
             2: "21-40",
             3: "41-60", 
@@ -170,7 +170,7 @@ class VariableValues():
         }
         
         # LA's public charging infrastructure density (No of public installs per 100'000 people)
-        V_12_values = {
+        V_11_values = {
             1: "0-50",
             2: "51-100",
             3: "101-150", 
@@ -179,13 +179,13 @@ class VariableValues():
         }
         
         # Hosehold working status
-        V_13_values = {
+        V_12_values = {
             1: "One or more working adults",
             2: "None working",
         }
         
         # tenure
-        V_14_values = {
+        V_13_values = {
             1: "Owned (outright or mortgage)",
             2: "Part mortgage, part rent",
             3: "Rented (LA, Co-op, private landlord)",
@@ -221,7 +221,6 @@ class VariableValues():
             'V_11': V_11_values,
             'V_12': V_12_values,
             'V_13': V_13_values,
-            'V_14': V_14_values
         }
 
         self.Variables_dic = Variables_dic
