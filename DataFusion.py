@@ -213,6 +213,9 @@ class DataFusion():
    
     
     def rename_reorder_vars(self) -> None:
+        
+        self.ds_obsrv_vars.drop(columns=['council'], inplace=True)
+        
         column_name_mapping = {
             'gpawr2c': 'Y',
             'tothinc': 'V_1',
@@ -224,17 +227,17 @@ class DataFusion():
             'D10': 'V_7',
             'typdwell': 'V_8',
             'C5': 'V_9',
-            'council': 'V_10',
-            'workpl_charging_density': 'V_11',
-            'public_charging_density': 'V_12',
-            'hhwork': 'V_13',
-            'tenure_harm': 'V_14',
+            'workpl_charging_density': 'V_10',
+            'public_charging_density': 'V_11',
+            'hhwork': 'V_12',
+            'tenure_harm': 'V_13',
         }
         
         self.ds_obsrv_vars.rename(columns=column_name_mapping, inplace=True)
         self.ds_obsrv_vars.drop(columns=['tsWghtP_n'], inplace=True)
         
-        self.ds_obsrv_vars = self.ds_obsrv_vars[['Y', 'V_1', 'V_2', 'V_3', 'V_4', 'V_5', 'V_6', 'V_7', 'V_8', 'V_9', 'V_10', 'V_11', 'V_12', 'V_13', 'V_14']]
+        
+        self.ds_obsrv_vars = self.ds_obsrv_vars[['Y', 'V_1', 'V_2', 'V_3', 'V_4', 'V_5', 'V_6', 'V_7', 'V_8', 'V_9', 'V_10', 'V_11', 'V_12', 'V_13']]
         
         return
  
