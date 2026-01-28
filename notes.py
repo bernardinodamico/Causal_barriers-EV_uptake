@@ -4,17 +4,7 @@ import pandas as pd
 import os
 
 
-
-
-
-
-
-
-
-
-
-
-  
+ 
 csv_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "DATA", "processed_dataset.csv")
 dataset = pd.read_csv(filepath_or_buffer=csv_path, sep=",")
 
@@ -48,6 +38,8 @@ learner.addForbiddenArc('V_2', 'V_8')
 # knowledge (such as a known physical law or a temporal 
 # sequence) that a causal relationship exists.
 learner.addMandatoryArc('V_7', 'Y')
+learner.addMandatoryArc('V_1', 'V_8')
+
 
 # 5. Learn the graph
 learnt_mixed_graph = learner.learnPDAG()
