@@ -42,7 +42,30 @@ learner.addForbiddenArc('V_5', 'V_13')
 learner.addForbiddenArc('V_13', 'V_5')
 learner.addForbiddenArc('V_7', 'V_8')
 learner.addForbiddenArc('V_7', 'V_14')
+#---------------------------------------------------------------
+learner.addForbiddenArc('V_14', 'V_8')
+learner.addForbiddenArc('V_8', 'V_14')
 
+learner.addForbiddenArc('V_7', 'V_13')
+learner.addForbiddenArc('V_13', 'V_7')
+
+learner.addForbiddenArc('V_7', 'V_14')
+learner.addForbiddenArc('V_14', 'V_7')
+
+learner.addForbiddenArc('V_2', 'Y')
+learner.addForbiddenArc('Y', 'V_2')
+
+learner.addForbiddenArc('V_6', 'V_14')
+learner.addForbiddenArc('V_14', 'V_6')
+
+learner.addForbiddenArc('V_9', 'V_14')
+learner.addForbiddenArc('V_14', 'V_9')
+
+learner.addForbiddenArc('V_6', 'V_9')
+learner.addForbiddenArc('V_9', 'V_6')
+
+learner.addForbiddenArc('V_8', 'V_9')
+learner.addForbiddenArc('V_9', 'V_8')
 
 # You would force a mandatory arc because of domain 
 # knowledge (such as a known physical law or a temporal 
