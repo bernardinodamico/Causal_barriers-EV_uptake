@@ -54,8 +54,8 @@ def gen_training_dataset(weighted_resampling: bool, parking_prov_folds: str, ten
 if __name__ == "__main__":
     gen_training_dataset(weighted_resampling=True, 
                          sample_multiplier=1.0, 
-                         parking_prov_folds='6-fold', 
-                         tenure_folds='5-fold', 
-                         work_folds='5-fold',
-                         dataset_name='processed_dataset_for_CausalDiscovery'
+                         parking_prov_folds='2-fold', 
+                         tenure_folds='3-fold', 
+                         work_folds='2-fold',
+                         dataset_name='processed_dataset_reduced_folds'
                          )

@@ -5,7 +5,7 @@ import os
 
 
  
-csv_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "DATA", "processed_dataset_for_CausalDiscovery.csv")
+csv_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "DATA", "processed_dataset_reduced_folds.csv")
 dataset = pd.read_csv(filepath_or_buffer=csv_path, sep=",")
 
 # 1. Initialize the learner with your dataframe
@@ -27,45 +27,20 @@ learner.useNMLCorrection() # Normalized Maximum Likelihood (NML) correction
 # terms of a confounder (latent or observed).
 
 learner.addForbiddenArc('Y', 'V_2')
-learner.addForbiddenArc('V_8', 'V_9')
-learner.addForbiddenArc('V_2', 'V_8')
-learner.addForbiddenArc('V_7', 'V_13')
-learner.addForbiddenArc('V_8', 'V_14')
-learner.addForbiddenArc('V_2', 'V_7')
 learner.addForbiddenArc('Y', 'V_13')
-learner.addForbiddenArc('V_2', 'V_12')
-learner.addForbiddenArc('V_13', 'V_12')
+learner.addForbiddenArc('V_2', 'V_7')
+learner.addForbiddenArc('V_8', 'V_9')
 learner.addForbiddenArc('V_7', 'V_9')
-learner.addForbiddenArc('V_8', 'V_2')
-learner.addForbiddenArc('V_13', 'Y')
-learner.addForbiddenArc('V_5', 'V_13')
-learner.addForbiddenArc('V_13', 'V_5')
+learner.addForbiddenArc('V_7', 'V_13')
+
+
+learner.addForbiddenArc('V_8', 'V_14')
+learner.addForbiddenArc('V_14', 'V_8')
+
+learner.addForbiddenArc('V_2', 'V_8')
+
 learner.addForbiddenArc('V_7', 'V_8')
 learner.addForbiddenArc('V_7', 'V_14')
-#---------------------------------------------------------------
-learner.addForbiddenArc('V_14', 'V_8')
-learner.addForbiddenArc('V_8', 'V_14')
-
-learner.addForbiddenArc('V_7', 'V_13')
-learner.addForbiddenArc('V_13', 'V_7')
-
-learner.addForbiddenArc('V_7', 'V_14')
-learner.addForbiddenArc('V_14', 'V_7')
-
-learner.addForbiddenArc('V_2', 'Y')
-learner.addForbiddenArc('Y', 'V_2')
-
-learner.addForbiddenArc('V_6', 'V_14')
-learner.addForbiddenArc('V_14', 'V_6')
-
-learner.addForbiddenArc('V_9', 'V_14')
-learner.addForbiddenArc('V_14', 'V_9')
-
-learner.addForbiddenArc('V_6', 'V_9')
-learner.addForbiddenArc('V_9', 'V_6')
-
-learner.addForbiddenArc('V_8', 'V_9')
-learner.addForbiddenArc('V_9', 'V_8')
 
 # You would force a mandatory arc because of domain 
 # knowledge (such as a known physical law or a temporal 
