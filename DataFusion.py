@@ -38,16 +38,16 @@ class DataFusion():
         
         household_variables = [
             'UNIQIDNEW',
-            'gpawr2c', # 'Y' whether random adult in household considers buying (or already has) a plug-in electric car or van
-            'tothinc', # 'V_1' annual net household income [£]
-            'NUMCARS_NEW', # 'V_2' number of cars available for private use by members of household
-            'totads', # 'V_3' total number of adult people in the household
-            'totkids', # 'V_4' total number of children in the household
-            'hhtype_new', # 'V_5' household composition
-            'SHS_2CLA', # 'V_6' household urban/rural classification
-            'council', # 'V_10' local authority where the household resides
-            'hhwork', # 'V_13' Hosehold working status
-            'tenure_harm', # 'V_14' tenure
+            'gpawr2c', # whether random adult in household considers buying (or already has) a plug-in electric car or van
+            'tothinc', # annual net household income [£]
+            'NUMCARS_NEW', # number of cars available for private use by members of household
+            'totads', # total number of adult people in the household
+            'totkids', # total number of children in the household
+            'hhtype_new', #  household composition
+            'SHS_2CLA', #  household urban/rural classification
+            'council', #  local authority where the household resides
+            'hhwork', #  Hosehold working status
+            'tenure_harm', #  tenure
         ]
         
         self.ds_obsrv_vars = scottish_house_condition_ds[house_condition_variables].merge(
@@ -82,28 +82,36 @@ class DataFusion():
         return
 
 
-    def working_status_classification(self) -> None:
-        conditions = [
-            (self.ds_obsrv_vars['hhwork'].isin([1, 3, 4])), # One or more working adults
-            (self.ds_obsrv_vars['hhwork'].isin([2, 5]))     # None working
-            ]
-        choices = ['1', '2']
-        self.ds_obsrv_vars['hhwork'] = np.select(conditions, choices, default=pd.NA)
-        self.ds_obsrv_vars['hhwork'] = self.ds_obsrv_vars['hhwork'].astype(int)
-        
+    def working_status_classification(self, classification: str) -> None:
+        if classification == '5-fold':
+            pass
+        elif classification == '2-fold':
+            conditions = [
+                (self.ds_obsrv_vars['hhwork'].isin([1, 3, 4])), # One or more working adults
+                (self.ds_obsrv_vars['hhwork'].isin([2, 5]))     # None working
+                ]
+            choices = ['1', '2']
+            self.ds_obsrv_vars['hhwork'] = np.select(conditions, choices, default=pd.NA)
+            self.ds_obsrv_vars['hhwork'] = self.ds_obsrv_vars['hhwork'].astype(int)
+        else:
+            raise ValueError(f"Invalid argument for classification = '{classification}'. Expected: '5-fold' or '2-fold'.") 
         return
 
 
-    def tenure_classification(self) -> None:
-        conditions = [
-            (self.ds_obsrv_vars['tenure_harm'].isin([1, 2])),  # Owned (outright or mortgage)
-            (self.ds_obsrv_vars['tenure_harm'].isin([3])),     # Part mortgage, part rent
-            (self.ds_obsrv_vars['tenure_harm'].isin([4, 5]))      # Rented (LA, Co-op, private landlord)
-            ]
-        choices = ['1', '2', '3']
-        self.ds_obsrv_vars['tenure_harm'] = np.select(conditions, choices, default=pd.NA)
-        self.ds_obsrv_vars['tenure_harm'] = self.ds_obsrv_vars['tenure_harm'].astype(int)
-        
+    def tenure_classification(self, classification: str) -> None:
+        if classification == '5-fold':
+            pass
+        elif classification == '3-fold':
+            conditions = [
+                (self.ds_obsrv_vars['tenure_harm'].isin([1, 2])),  # Owned (outright or mortgage)
+                (self.ds_obsrv_vars['tenure_harm'].isin([3])),     # Part mortgage, part rent
+                (self.ds_obsrv_vars['tenure_harm'].isin([4, 5]))      # Rented (LA, Co-op, private landlord)
+                ]
+            choices = ['1', '2', '3']
+            self.ds_obsrv_vars['tenure_harm'] = np.select(conditions, choices, default=pd.NA)
+            self.ds_obsrv_vars['tenure_harm'] = self.ds_obsrv_vars['tenure_harm'].astype(int)
+        else:
+            raise ValueError(f"Invalid argument for classification = '{classification}'. Expected: '5-fold' or '3-fold'.") 
         return
 
 
@@ -135,6 +143,7 @@ class DataFusion():
             council_pops.append(pop_estimate.loc[i, "All ages"])
 
         council_labels = []
+        
         workplace_installs = []
         for i in range(354, 386):
             council_labels.append(Workplace_charging_ds.loc[i, "Region or Local Authority"])
@@ -146,23 +155,23 @@ class DataFusion():
             
         
         vv = VariableValues()
-        V_10_vlabels = list(vv.Variables_dic['V_10'].values())
-        V_10_vnums = list(vv.Variables_dic['V_10'].keys())
+        V_14_vlabels = list(vv.Variables_dic['V_14'].values())
+        V_14_vnums = list(vv.Variables_dic['V_14'].keys())
         
         #----------------------------------------------------------------------------------------
         wp_installs = {}
         pb_installs = {}
         
-        for i in range(0, len(V_10_vlabels)):
+        for i in range(0, len(V_14_vlabels)):
             for j in range(0, len(council_labels)):
-                if V_10_vlabels[i] == council_labels[j]:
+                if V_14_vlabels[i] == council_labels[j]:
                     
                     per_capita_workplace_installs = (workplace_installs[j] / council_pops[j]) * 100000
-                    wp_installs[V_10_vnums[i]] = per_capita_workplace_installs
+                    wp_installs[V_14_vnums[i]] = per_capita_workplace_installs
                     
                     
                     per_capita_public_install = (public_installs[j] / council_pops[j]) * 100000
-                    pb_installs[V_10_vnums[i]] = per_capita_public_install
+                    pb_installs[V_14_vnums[i]] = per_capita_public_install
                     
                     break
                 else:
@@ -176,20 +185,20 @@ class DataFusion():
         wp_installs, pb_installs = self._compute_infrastruct_densities()
         vv = VariableValues()
         
-        V_11_values = vv.Variables_dic['V_11']
+        V_10_values = vv.Variables_dic['V_10']
         bin_edges_wp = np.array([0.0, 20.0, 40.0, 60.0, 80.0, 100.0])
         discretised_wp_installs = {}
         for k, v in wp_installs.items():
             bin_id_wp = np.digitize(v, bin_edges_wp, right=False)
-            bin_id_wp = min(bin_id_wp, len(V_11_values))
+            bin_id_wp = min(bin_id_wp, len(V_10_values))
             discretised_wp_installs[k] = bin_id_wp # a dict with key = LA value, and dict-value = discretised workplace installs density
 
-        V_12_values = vv.Variables_dic['V_12']
+        V_11_values = vv.Variables_dic['V_11']
         bin_edges_pb = np.array([0.0, 50.0, 100.0, 150.0, 200.0, 250.0])
         discretised_pb_installs = {}
         for k, v in pb_installs.items():
             bin_id_pb = np.digitize(v, bin_edges_pb, right=False)
-            bin_id_pb = min(bin_id_pb, len(V_12_values))
+            bin_id_pb = min(bin_id_pb, len(V_11_values))
             discretised_pb_installs[k] = bin_id_pb # a dict with key = LA value, and dict-value = discretised public installs density
         #----------------------------------------------------------------------------------------------------------------
         
@@ -197,6 +206,7 @@ class DataFusion():
         self.ds_obsrv_vars["public_charging_density"] = (self.ds_obsrv_vars["council"].astype(str).map(discretised_pb_installs)).astype("Int64")
         
         return
+    
     
     
     def weighted_resampling(self, sample_size: int) -> None:
@@ -214,7 +224,7 @@ class DataFusion():
     
     def rename_reorder_vars(self) -> None:
         
-        self.ds_obsrv_vars.drop(columns=['council'], inplace=True)
+        #self.ds_obsrv_vars.drop(columns=['council'], inplace=True)
         
         column_name_mapping = {
             'gpawr2c': 'Y',
@@ -231,13 +241,14 @@ class DataFusion():
             'public_charging_density': 'V_11',
             'hhwork': 'V_12',
             'tenure_harm': 'V_13',
+            'council': 'V_14'
         }
         
         self.ds_obsrv_vars.rename(columns=column_name_mapping, inplace=True)
         self.ds_obsrv_vars.drop(columns=['tsWghtP_n'], inplace=True)
         
         
-        self.ds_obsrv_vars = self.ds_obsrv_vars[['Y', 'V_1', 'V_2', 'V_3', 'V_4', 'V_5', 'V_6', 'V_7', 'V_8', 'V_9', 'V_10', 'V_11', 'V_12', 'V_13']]
+        self.ds_obsrv_vars = self.ds_obsrv_vars[['Y', 'V_1', 'V_2', 'V_3', 'V_4', 'V_5', 'V_6', 'V_7', 'V_8', 'V_9', 'V_10', 'V_11', 'V_12', 'V_13', 'V_14']]
         
         return
  

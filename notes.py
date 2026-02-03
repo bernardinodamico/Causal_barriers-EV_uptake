@@ -5,7 +5,7 @@ import os
 
 
  
-csv_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "DATA", "processed_dataset.csv")
+csv_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "DATA", "processed_dataset_for_CausalDiscovery.csv")
 dataset = pd.read_csv(filepath_or_buffer=csv_path, sep=",")
 
 # 1. Initialize the learner with your dataframe
@@ -26,19 +26,31 @@ learner.useNMLCorrection() # Normalized Maximum Likelihood (NML) correction
 # because the captured correlation is to be expained in 
 # terms of a confounder (latent or observed).
 
-learner.addForbiddenArc('Y', 'V_1')
 learner.addForbiddenArc('Y', 'V_2')
-learner.addForbiddenArc('V_8', 'V_6')
-learner.addForbiddenArc('V_2', 'V_3')
 learner.addForbiddenArc('V_8', 'V_9')
-learner.addForbiddenArc('V_7', 'V_8')
 learner.addForbiddenArc('V_2', 'V_8')
+learner.addForbiddenArc('V_7', 'V_13')
+learner.addForbiddenArc('V_8', 'V_14')
+learner.addForbiddenArc('V_2', 'V_7')
+learner.addForbiddenArc('Y', 'V_13')
+learner.addForbiddenArc('V_2', 'V_12')
+learner.addForbiddenArc('V_13', 'V_12')
+learner.addForbiddenArc('V_7', 'V_9')
+learner.addForbiddenArc('V_8', 'V_2')
+learner.addForbiddenArc('V_13', 'Y')
+learner.addForbiddenArc('V_5', 'V_13')
+learner.addForbiddenArc('V_13', 'V_5')
+learner.addForbiddenArc('V_7', 'V_8')
+learner.addForbiddenArc('V_7', 'V_14')
+
 
 # You would force a mandatory arc because of domain 
 # knowledge (such as a known physical law or a temporal 
 # sequence) that a causal relationship exists.
+
 learner.addMandatoryArc('V_7', 'Y')
-learner.addMandatoryArc('V_1', 'V_8')
+learner.addMandatoryArc('V_1', 'Y')
+
 
 
 # 5. Learn the graph
@@ -53,7 +65,7 @@ print("--- CAUSAL DISCOVERY RESULTS ---")
 # 1. Get Directed Arcs (->)
 for tail, head in learnt_mixed_graph.arcs():
     mi = learner.correctedMutualInformation(tail, head)
-    print(f"ARC: {dataset.columns[tail]} --> {dataset.columns[head]} | MI = {round(mi, 5)}")
+    print(f"ARC: {dataset.columns[tail]} --> {dataset.columns[head]}")
 
 # 2. Get Undirected Edges (-)
 for u, v in learnt_mixed_graph.edges():
