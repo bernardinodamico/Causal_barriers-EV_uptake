@@ -42,6 +42,7 @@ learner.addForbiddenArc('V_2', 'V_8')
 learner.addForbiddenArc('V_7', 'V_8')
 learner.addForbiddenArc('V_7', 'V_14')
 
+
 # You would force a mandatory arc because of domain 
 # knowledge (such as a known physical law or a temporal 
 # sequence) that a causal relationship exists.
