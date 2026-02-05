@@ -49,8 +49,8 @@ learner.addForbiddenArc('V_7', 'V_14')
 
 learner.addMandatoryArc('V_7', 'Y')
 learner.addMandatoryArc('V_1', 'Y')
-
-
+learner.addMandatoryArc('V_1', 'V_8')
+learner.addMandatoryArc('V_1', 'V_13')
 
 # 5. Learn the graph
 learnt_mixed_graph = learner.learnPDAG()
