@@ -3,6 +3,11 @@ import pyAgrum.lib.image as gimg
 import pandas as pd
 import os
 
+'''
+Script to learn the partially directed graph (a Maximal Ancestral Graphs, MAG) form the data. 
+It uses the Multivariate Information-based Inductive Causation (MIIC) alghoritm, developed by the Isambert Lab at the Curie institute.
+NOTE: the outputtted MAG includes undirected edges, hence it requires manual refinement to run causal identification/estimation.
+'''
 
  
 csv_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "DATA", "processed_dataset_reduced_folds.csv")
