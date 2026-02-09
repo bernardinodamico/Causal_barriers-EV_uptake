@@ -12,7 +12,7 @@ for training the model parameters (and learning the graph).
 def gen_training_dataset(weighted_resampling: bool, parking_prov_folds: str, tenure_folds: str, sample_multiplier: float, work_folds: str, dataset_name: str):
     
     '''
-    param resampling: if true, the dataset is resampled using weights
+    weighted_resampling: if true, the dataset is resampled using weights
     so to be representative of the Scotland's households population
     The final sample size of the resampled dataset is equal to the original
     size times the multiplier
