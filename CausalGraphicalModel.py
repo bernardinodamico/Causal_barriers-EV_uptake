@@ -133,11 +133,6 @@ print(f"LaTeX Formula: {latex_str}")
 print("Resulting Potential:")
 print(potential)
 
-# 3. See how it was identified (e.g., "Backdoor adjustment")
+# 3. See how it was identified 
 print(f"Method: {explanation}")
-
-
-
-
-
 
