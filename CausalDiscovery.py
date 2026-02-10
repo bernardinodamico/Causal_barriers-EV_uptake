@@ -52,8 +52,8 @@ class CausalDiscovery():
         learner.addMandatoryArc('V_1', 'Y')
         learner.addMandatoryArc('V_1', 'V_8')
         learner.addMandatoryArc('V_1', 'V_13')
-        learner.addMandatoryArc('V_10', 'Y')
-        learner.addMandatoryArc('V_11', 'Y')
+        #learner.addMandatoryArc('V_10', 'Y')
+        #learner.addMandatoryArc('V_11', 'Y')
         #-------------------------------------
 
         self.learned_MAG = learner.learnPDAG()

@@ -25,7 +25,7 @@ class CausalGraphicalModel():
         parameter: dataset_filename = the name of the training dataset (including its file extention)
         """ 
         base_path = Path(r'C:/Causal_barriers-EV_uptake_local_code/Causal_barriers-EV_uptake/DATA')
-        csv_path = base_path / 'processed_dataset_reduced_folds.csv'
+        csv_path = base_path / 'processed_dataset.csv'
         
         self.disctetised_ds = pd.read_csv(filepath_or_buffer=csv_path, sep=",")
 
@@ -70,9 +70,8 @@ class CausalGraphicalModel():
             self.b_net.addArc(cd.dataset.columns[tail], cd.dataset.columns[head]) 
         
         # manually add edges that MIIC was unable to direct
-        self.b_net.addArc('V_12', 'V_1') 
-        self.b_net.addArc('V_5', 'V_4')
-        
+        self.b_net.addArc('V_14', 'V_11') 
+        self.b_net.addArc('V_14', 'V_10')
 
         return
     
@@ -89,9 +88,10 @@ class CausalGraphicalModel():
         Method to add latent variables to the PyAgrum CausalModel object "c_model". 
         '''
         self.c_model = csl.CausalModel(bn=self.b_net, 
-                                  latentVarsDescriptor=[("U_1", ["V_6","V_9"]),
+                                  latentVarsDescriptor=[("U_1", ["V_10","V_11"]),
                                                         ("U_2", ["V_6","Y"]),
-                                                        ("U_3", ["V_8", "V_13", "Y"]),
+                                                        ("U_3", ["V_1", "Y"]),
+                                                        ("U_4", ["V_14", "V_6"]),
                                                         ],
                                   keepArcs=True)
         return
