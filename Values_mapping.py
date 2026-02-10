@@ -39,9 +39,7 @@ class VariableValues():
 
 
     def __init__(self):  
-        '''
-        Discrete variables (categorical, ordinal, etc.)
-        ''' 
+
         # Household income
         V_1_values = {
             1: "0-6000",
@@ -197,7 +195,6 @@ class VariableValues():
             2: "Thinking to buy one soon",
             3: "Thinking to buy one in the future",
             4: "Not considering to buy one",
-            5: "Do not drive/need a car"
         }
  
         '''

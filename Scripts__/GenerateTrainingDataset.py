@@ -9,7 +9,7 @@ Below is a function instantiating the DataFusion class. It builds the dataset
 for training the model parameters (and learning the graph).
 '''
 
-def gen_training_dataset(weighted_resampling: bool, parking_prov_folds: str, tenure_folds: str, sample_multiplier: float, work_folds: str, dataset_name: str):
+def gen_training_dataset(weighted_resampling: bool, parking_prov_folds: str, tenure_folds: str, sample_multiplier: float, work_folds: str, dataset_name: str, EV_folds: str):
     
     '''
     weighted_resampling: if true, the dataset is resampled using weights
@@ -27,6 +27,7 @@ def gen_training_dataset(weighted_resampling: bool, parking_prov_folds: str, ten
     dp.parking_provision_classification(classification=parking_prov_folds)
     dp.working_status_classification(classification=work_folds)
     dp.tenure_classification(classification=tenure_folds)
+    dp.EV_classification(classification=EV_folds)
     dp.fill_in_infrastruct_density()
     if weighted_resampling is True:
         dp.weighted_resampling(sample_size=int(len(dp.ds_obsrv_vars) * sample_multiplier))
@@ -57,5 +58,6 @@ if __name__ == "__main__":
                          parking_prov_folds='2-fold', 
                          tenure_folds='3-fold', 
                          work_folds='2-fold',
-                         dataset_name='processed_dataset_reduced_folds'
+                         EV_folds='4-fold',
+                         dataset_name='processed_dataset'
                          )

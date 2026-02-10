@@ -78,6 +78,7 @@ class DataFusion():
         self.ds_obsrv_vars['tothinc'] = self.ds_obsrv_vars['tothinc'].astype(int)
         
         self.ds_obsrv_vars = (self.ds_obsrv_vars.loc[self.ds_obsrv_vars['gpawr2c'] != 6].reset_index(drop=True)) # removes rows where gpawr2c = 6
+        self.ds_obsrv_vars = (self.ds_obsrv_vars.loc[self.ds_obsrv_vars['gpawr2c'] != 5].reset_index(drop=True)) # removes rows where gpawr2c = 5
         
         return
 
@@ -130,6 +131,22 @@ class DataFusion():
         else:
             raise ValueError(f"Invalid argument for classification = '{classification}'. Expected: '6-fold' or '2-fold'.")    
         return
+
+    def EV_classification(self, classification: str) -> None:
+        if classification == '4-fold':
+            pass
+        elif classification == '2-fold':
+            conditions = [
+            (self.ds_obsrv_vars['gpawr2c'].isin([1, 2, 3])), # wants to buy (already has) and EV
+            (self.ds_obsrv_vars['gpawr2c'].isin([4]))        # does not want to buy an EV
+            ]
+            choices = ['1', '2']
+            self.ds_obsrv_vars['gpawr2c'] = np.select(conditions, choices, default=pd.NA)
+            self.ds_obsrv_vars['gpawr2c'] = self.ds_obsrv_vars['gpawr2c'].astype(int)
+        else:
+            raise ValueError(f"Invalid argument for classification = '{classification}'. Expected: '4-fold' or '2-fold'.")    
+        return
+        
 
 
     def _compute_infrastruct_densities(self) -> tuple[dict, dict]:

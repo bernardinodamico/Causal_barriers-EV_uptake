@@ -15,7 +15,7 @@ class CausalDiscovery():
     def discover_MAG(self) -> None:
  
         base_path = Path(r'C:/Causal_barriers-EV_uptake_local_code/Causal_barriers-EV_uptake/DATA')
-        csv_path = base_path / 'processed_dataset_reduced_folds.csv'
+        csv_path = base_path / 'processed_dataset.csv'
         
         dataset = pd.read_csv(filepath_or_buffer=csv_path, sep=",")
 
@@ -36,12 +36,24 @@ class CausalDiscovery():
         learner.addForbiddenArc('V_2', 'V_8')
         learner.addForbiddenArc('V_7', 'V_8')
         learner.addForbiddenArc('V_7', 'V_14')
+        learner.addForbiddenArc('V_1', 'V_12')
+        learner.addForbiddenArc('V_8', 'V_5')
+        learner.addForbiddenArc('V_1', 'V_5')
+        learner.addForbiddenArc('V_12', 'V_5')
+        learner.addForbiddenArc('V_9', 'V_6')
+        learner.addForbiddenArc('V_9', 'V_12')
+        learner.addForbiddenArc('V_2', 'V_13')
+        learner.addForbiddenArc('V_13', 'V_2')
+        learner.addForbiddenArc('V_7', 'V_13')
+        learner.addForbiddenArc('V_13', 'V_7')
 
         # Mandatory edges
         learner.addMandatoryArc('V_7', 'Y')
         learner.addMandatoryArc('V_1', 'Y')
         learner.addMandatoryArc('V_1', 'V_8')
         learner.addMandatoryArc('V_1', 'V_13')
+        learner.addMandatoryArc('V_10', 'Y')
+        learner.addMandatoryArc('V_11', 'Y')
         #-------------------------------------
 
         self.learned_MAG = learner.learnPDAG()
