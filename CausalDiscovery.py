@@ -25,35 +25,36 @@ class CausalDiscovery():
         learner.useNMLCorrection() # Normalized Maximum Likelihood (NML) correction
 
         # Structural constraints (Prior domain knowledge)
-        learner.addForbiddenArc('Y', 'V_2')
-        learner.addForbiddenArc('Y', 'V_13')
-        learner.addForbiddenArc('V_2', 'V_7')
-        learner.addForbiddenArc('V_8', 'V_9')
-        learner.addForbiddenArc('V_7', 'V_9')
-        learner.addForbiddenArc('V_7', 'V_13')
-        learner.addForbiddenArc('V_8', 'V_14')
-        learner.addForbiddenArc('V_14', 'V_8')
-        learner.addForbiddenArc('V_2', 'V_8')
-        learner.addForbiddenArc('V_7', 'V_8')
-        learner.addForbiddenArc('V_7', 'V_14')
-        learner.addForbiddenArc('V_1', 'V_12')
-        learner.addForbiddenArc('V_8', 'V_5')
-        learner.addForbiddenArc('V_1', 'V_5')
-        learner.addForbiddenArc('V_12', 'V_5')
-        learner.addForbiddenArc('V_9', 'V_6')
-        learner.addForbiddenArc('V_9', 'V_12')
-        learner.addForbiddenArc('V_2', 'V_13')
-        learner.addForbiddenArc('V_13', 'V_2')
-        learner.addForbiddenArc('V_7', 'V_13')
-        learner.addForbiddenArc('V_13', 'V_7')
-
+        learner.addForbiddenArc('Y', 'V_2') # Owning an EV "per se" does not change the number of cars owned. 
+        learner.addForbiddenArc('Y', 'V_13') # Owning an EV does not cause tenancy
+        learner.addForbiddenArc('V_2', 'V_7') # No. of cars does not cause parking provision
+        learner.addForbiddenArc('V_8', 'V_9') # Dwelling type does not cause its age
+        learner.addForbiddenArc('V_7', 'V_9') # Parking provision does not cause dwelling age
+        learner.addForbiddenArc('V_7', 'V_13') # parking provision does not cause tenancy
+        learner.addForbiddenArc('V_8', 'V_14') # dwelling type does not cause location (LA)
+        learner.addForbiddenArc('V_14', 'V_8') # Location (LA) does not cause dwelling type
+        learner.addForbiddenArc('V_2', 'V_8') # No. of cars does not cause dwelling type
+        learner.addForbiddenArc('V_7', 'V_8') # parking provision does not cause dwelling type
+        learner.addForbiddenArc('V_7', 'V_14') # parking provision does not cause location (LA)
+        learner.addForbiddenArc('V_1', 'V_12') # income does not cause working status
+        learner.addForbiddenArc('V_8', 'V_5') # dwelling type does not cause household composition
+        learner.addForbiddenArc('V_1', 'V_5') # income does not change composition
+        learner.addForbiddenArc('V_12', 'V_5') # working status does not change household composition
+        learner.addForbiddenArc('V_9', 'V_6') # dwelling age does not cause urbanisation level
+        learner.addForbiddenArc('V_9', 'V_12') # dwelling age does not cause household working status
+        learner.addForbiddenArc('V_2', 'V_13') # No. cars does not cause tenancy
+        learner.addForbiddenArc('V_13', 'V_2') # tenancy does not cause No. of cars owned
+        learner.addForbiddenArc('V_7', 'V_13') # parking provision does not cause tenancy
+        learner.addForbiddenArc('V_13', 'V_7') # tenancy does not cause parking provision
+        learner.addForbiddenArc('V_12', 'V_9') # working status does not cause dwelling age
+        learner.addForbiddenArc('V_6', 'V_9') # Urbanisation level does not cause dwelling age
+        
         # Mandatory edges
-        learner.addMandatoryArc('V_7', 'Y')
-        learner.addMandatoryArc('V_1', 'Y')
-        learner.addMandatoryArc('V_1', 'V_8')
-        learner.addMandatoryArc('V_1', 'V_13')
-        #learner.addMandatoryArc('V_10', 'Y')
-        #learner.addMandatoryArc('V_11', 'Y')
+        learner.addMandatoryArc('V_7', 'Y') # parking provision causes EV ownership
+        learner.addMandatoryArc('V_1', 'Y') # income causes EV ownership
+        learner.addMandatoryArc('V_1', 'V_8') # income causes dwelling type
+        learner.addMandatoryArc('V_1', 'V_13') # income causes tenancy
+        learner.addMandatoryArc('V_7', 'V_2') # income causes No. of cars owned
         #-------------------------------------
 
         self.learned_MAG = learner.learnPDAG()

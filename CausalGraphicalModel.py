@@ -90,7 +90,7 @@ class CausalGraphicalModel():
         self.c_model = csl.CausalModel(bn=self.b_net, 
                                   latentVarsDescriptor=[("U_1", ["V_10","V_11"]),
                                                         ("U_2", ["V_6","Y"]),
-                                                        ("U_3", ["V_1", "Y"]),
+                                                        ("U_3", ["V_1", "V_2"]),
                                                         ("U_4", ["V_14", "V_6"]),
                                                         ],
                                   keepArcs=True)
