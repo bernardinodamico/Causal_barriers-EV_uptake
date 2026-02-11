@@ -70,8 +70,8 @@ class CausalGraphicalModel():
             self.b_net.addArc(cd.dataset.columns[tail], cd.dataset.columns[head]) 
         
         # manually add edges that MIIC was unable to direct
-        self.b_net.addArc('V_14', 'V_11') 
-        self.b_net.addArc('V_14', 'V_10')
+        #self.b_net.addArc('V_14', 'V_11') 
+
 
         return
     
@@ -88,10 +88,8 @@ class CausalGraphicalModel():
         Method to add latent variables to the PyAgrum CausalModel object "c_model". 
         '''
         self.c_model = csl.CausalModel(bn=self.b_net, 
-                                  latentVarsDescriptor=[("U_1", ["V_10","V_11"]),
-                                                        ("U_2", ["V_6","Y"]),
-                                                        ("U_3", ["V_1", "V_2"]),
-                                                        ("U_4", ["V_14", "V_6"]),
+                                  latentVarsDescriptor=[("U_1", ["V_1","V_2"]),
+                                                        ("U_2", ["V_8","Y"]),
                                                         ],
                                   keepArcs=True)
         return

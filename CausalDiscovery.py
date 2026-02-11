@@ -48,6 +48,7 @@ class CausalDiscovery():
         learner.addForbiddenArc('V_13', 'V_7') # tenancy does not cause parking provision
         learner.addForbiddenArc('V_12', 'V_9') # working status does not cause dwelling age
         learner.addForbiddenArc('V_6', 'V_9') # Urbanisation level does not cause dwelling age
+        learner.addForbiddenArc('V_8', 'V_2') # dwelling type does not cause No. of cars
         
         # Mandatory edges
         learner.addMandatoryArc('V_7', 'Y') # parking provision causes EV ownership
