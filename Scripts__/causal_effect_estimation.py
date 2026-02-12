@@ -13,7 +13,7 @@ cm = causal_grap_model.c_model # the pyAgrum CausalModel object
 formula, potential, explanation = csl.causalImpact(
     cm, 
     on='Y', 
-    doing='V_7',
+    doing='V_1',
     knowing={}
 )
 
