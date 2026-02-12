@@ -97,7 +97,7 @@ class CausalGraphicalModel():
     
 
     def build(self) -> None:
-        self.set_Lp_smoothing(Lp_sm=1.0)
+        self.set_Lp_smoothing(Lp_sm=0.005)
         self.add_nodes()
         self.add_causal_edges()
         self.learn_params(data=self.disctetised_ds)
