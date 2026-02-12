@@ -20,14 +20,15 @@ class CausalGraphicalModel():
     Lp_smoothing: float = None
  
  
-    def __init__(self):
+    def __init__(self, dataset_name: str):
         """
         parameter: dataset_filename = the name of the training dataset (including its file extention)
         """ 
         base_path = Path(r'C:/Causal_barriers-EV_uptake_local_code/Causal_barriers-EV_uptake/DATA')
-        csv_path = base_path / 'processed_dataset.csv'
+        csv_path = base_path / dataset_name
         
         self.disctetised_ds = pd.read_csv(filepath_or_buffer=csv_path, sep=",")
+        self.dataset_filename = dataset_name
 
         return
     
@@ -63,7 +64,7 @@ class CausalGraphicalModel():
         
         # run the causal discovery (MIIC) algo
         cd = CausalDiscovery()
-        cd.discover_MAG()
+        cd.discover_MAG(dataset_name=self.dataset_filename)
         
         # add directed edges as found by the MIIC algo
         for tail, head in cd.learned_MAG.arcs():

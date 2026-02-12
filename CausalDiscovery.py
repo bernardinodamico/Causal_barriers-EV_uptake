@@ -12,10 +12,10 @@ class CausalDiscovery():
     dataset: DataFrame = None
     learner: BNLearner = None
     
-    def discover_MAG(self) -> None:
+    def discover_MAG(self, dataset_name: str) -> None:
  
         base_path = Path(r'C:/Causal_barriers-EV_uptake_local_code/Causal_barriers-EV_uptake/DATA')
-        csv_path = base_path / 'processed_dataset.csv'
+        csv_path = base_path / dataset_name
         
         dataset = pd.read_csv(filepath_or_buffer=csv_path, sep=",")
 
