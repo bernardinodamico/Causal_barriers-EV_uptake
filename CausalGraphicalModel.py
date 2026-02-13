@@ -70,7 +70,7 @@ class CausalGraphicalModel():
         for tail, head in cd.learned_MAG.arcs():
             self.b_net.addArc(cd.dataset.columns[tail], cd.dataset.columns[head]) 
         
-        # manually add edges that MIIC was unable to direct
+        # manually add edges 
         #self.b_net.addArc('V_14', 'V_11') 
 
 
@@ -97,7 +97,7 @@ class CausalGraphicalModel():
     
 
     def build(self) -> None:
-        self.set_Lp_smoothing(Lp_sm=0.005)
+        self.set_Lp_smoothing(Lp_sm=0.00001)
         self.add_nodes()
         self.add_causal_edges()
         self.learn_params(data=self.disctetised_ds)

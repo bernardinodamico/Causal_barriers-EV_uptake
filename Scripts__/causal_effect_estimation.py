@@ -13,7 +13,7 @@ cm = causal_grap_model.c_model # the pyAgrum CausalModel object
 formula, potential, explanation = csl.causalImpact(
     cm, 
     on='Y', 
-    doing='V_1',
+    doing='V_7',
     knowing={}
 )
 
@@ -32,7 +32,10 @@ print(f"Method: {explanation}")
 
 #--------------------------------------------
 
-#ve = gum.VariableElimination(causal_grap_model.b_net)
-#p_Y_given_V_7 = ve.evidenceJointImpact(targets=['Y'], evs={'V_7'}) #returns a pyAgrum.Potential for P(targets|evs) for all instantiations (values) of targets and evs variables.
+ve = gum.VariableElimination(causal_grap_model.b_net)
+p_Y_given_V_7 = ve.evidenceJointImpact(targets=['Y'], evs={'V_7'}) #returns a pyAgrum.Potential for P(targets|evs) for all instantiations (values) of targets and evs variables.
 
-#print(p_Y_given_V_7)
+print(p_Y_given_V_7)
+
+
+
