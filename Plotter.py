@@ -114,7 +114,7 @@ class Plotter():
         bar_width = 0.8
         b_pp_interv = np.arange(len(x_labels))
         
-        ax.bar(b_pp_interv, treatment_effects, bar_width, color="#BA7DBE", edgecolor='black')
+        ax.bar(b_pp_interv, treatment_effects, bar_width, color="#49C5A2", edgecolor='black')
         
         ax.set_xticks(b_pp_interv, ['', '', '', ''])
         ax.set_ylabel("Treatment effect: " r"$\Delta_{TE}$" " (pp)", fontsize=14)
@@ -142,7 +142,7 @@ class Plotter():
         bar_width = 0.8
         b_pp_obs = np.arange(len(x_labels))
         
-        ax.bar(b_pp_obs, observed_diff, bar_width, color="#BA7DBE", edgecolor='black')
+        ax.bar(b_pp_obs, observed_diff, bar_width, color="#49C5A2", edgecolor='black')
         
         ax.set_xticks(b_pp_obs, ['', '', '', ''])
         ax.set_ylabel("Observed difference: " r"$\Delta_{Obsv.}$" " (pp)", fontsize=14)
