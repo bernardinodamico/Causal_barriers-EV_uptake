@@ -49,7 +49,7 @@ class Plotter():
         x_labels = ["Already own\nelectric car/van", "Thinking to\nbuy one soon", "Thinking to buy\none in the future", "Not considering\nto buy one"]
         
         plt.rcParams["font.family"] = "Arial"
-        fig, axes = plt.subplots(2, 2, figsize=(9, 9), gridspec_kw={'height_ratios': [1.62, 1]})  # 2 rows x 2 cols
+        fig, axes = plt.subplots(2, 2, figsize=(9, 9), gridspec_kw={'height_ratios': [1.7, 1]})  # 2 rows x 2 cols
         
 
         #---------------------------------------------------------------------------
@@ -76,7 +76,7 @@ class Plotter():
         ax.grid(axis='y', linestyle='--', alpha=0.7, color='black')
         ax.legend(loc='upper left', frameon=True, title="Parking provision intervention", title_fontsize=12, fontsize=12, framealpha=1.0)
         
-        ax.text(-0.06, 1.1, "a", transform=ax.transAxes, fontsize=18, fontweight='bold', va='top')
+        ax.text(-0.06, 1.1, "a", transform=ax.transAxes, fontsize=19, fontweight='bold', va='top')
         #------------------------------------------------------------------------------
 
 
@@ -103,7 +103,7 @@ class Plotter():
         ax.grid(axis='y', linestyle='--', alpha=0.7, color='black')
         ax.legend(loc='upper left', frameon=True, title="Parking provision observation", title_fontsize=12, fontsize=12, framealpha=1)
         
-        ax.text(-0.06, 1.1, "b", transform=ax.transAxes, fontsize=18, fontweight='bold', va='top')
+        ax.text(-0.06, 1.1, "b", transform=ax.transAxes, fontsize=19, fontweight='bold', va='top')
         #------------------------------------------------------------------------------
         
         ax = axes[1, 0]
@@ -131,7 +131,7 @@ class Plotter():
         ax.text(b_pp_interv[2], treatment_effects[2] - 0.15, f"-{round(treatment_effects[2], 1)}", ha='center', va='top', fontsize=12)
         ax.text(b_pp_interv[3], treatment_effects[3] + 0.1, f"+{round(treatment_effects[3], 1)}", ha='center', va='bottom', fontsize=12)
         
-        ax.text(-0.06, 1.15, "c", transform=ax.transAxes, fontsize=18, fontweight='bold', va='top')
+        ax.text(-0.06, 1.15, "c", transform=ax.transAxes, fontsize=19, fontweight='bold', va='top')
         #----------------------------------------------------------------------------------
         
         ax = axes[1, 1]
@@ -159,7 +159,7 @@ class Plotter():
         ax.text(b_pp_obs[2], observed_diff[2] - 0.15, f"-{round(observed_diff[2], 1)}", ha='center', va='top', fontsize=12)
         ax.text(b_pp_obs[3], observed_diff[3] - 0.15, f"-{round(observed_diff[3], 1)}", ha='center', va='top', fontsize=12)
         
-        ax.text(-0.06, 1.15, "d", transform=ax.transAxes, fontsize=18, fontweight='bold', va='top')
+        ax.text(-0.06, 1.15, "d", transform=ax.transAxes, fontsize=19, fontweight='bold', va='top')
         #----------------------------------------------------------------------------------
         
 
