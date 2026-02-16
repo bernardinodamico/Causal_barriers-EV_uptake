@@ -7,8 +7,8 @@ from pyAgrum.causal import CausalModel
 
 '''
 Script to:
-- evaluate independency checks (using d-separartion) 
-- count undirected simple backdoor paths between variables 
+- evaluate independency checks (using d-separartion) in mutilated graphs
+- count undirected simple backdoor paths between variables in mutilated graphs
 '''
 
 
