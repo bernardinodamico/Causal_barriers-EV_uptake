@@ -28,7 +28,6 @@ causal_grap_model.get_paths(sub_graph=G_V_1_underscored, st_var='V_1', end_var='
 causal_grap_model.check_independence(graph=G_V_1_underscored, A_nodes={'V_1'}, B_nodes={'Y'}, conditioned_on={'V_5'}, print_res=True)
 
 #--------------------------------------------------------------------------------
-
 G_V_7_underscored = causal_grap_model.get_subgraph(which_graph='G_V_7_underscored') # the original graph "G" after removing all arrows going out of V_7
 
 # count back-door paths between V_7 and Y
