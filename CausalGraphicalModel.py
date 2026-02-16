@@ -19,7 +19,6 @@ class CausalGraphicalModel():
     G: DiGraph = None
     Lp_smoothing: float = None
  
- 
     def __init__(self, dataset_name: str):
         """
         parameter: dataset_filename = the name of the training dataset (including its file extention)
@@ -31,6 +30,7 @@ class CausalGraphicalModel():
         self.dataset_filename = dataset_name
 
         return
+    
     
     def set_Lp_smoothing(self, Lp_sm: float):
         self.Lp_smoothing = Lp_sm
@@ -95,7 +95,7 @@ class CausalGraphicalModel():
                                   keepArcs=True)
         return
     
-
+    
     def build(self) -> None:
         self.set_Lp_smoothing(Lp_sm=0.00001)
         self.add_nodes()
@@ -103,6 +103,85 @@ class CausalGraphicalModel():
         self.learn_params(data=self.disctetised_ds)
         self.add_latent_vars()
         return
+    
+
+    def get_paths(self, sub_graph: DiGraph, st_var: str, end_var: str, print_paths: bool = True, print_count: bool = True) -> list:
+        """
+        Returns the list (or count) of all undirected paths between two nodes. 
+        Parameters: 
+        - sub_graph: the graph to inspect
+        - st_var: name of one of the variables
+        - end_var: name of the other variable
+        """
+        paths = []
+        for path in nx.all_simple_paths(G=sub_graph.to_undirected(), source=st_var, target=end_var, cutoff=None):
+            paths.append(path)
+        
+        if print_count is True:
+            print("\n")
+            print(f"Found {len(paths)} undirected paths between {st_var} and {end_var} in graph {sub_graph.name}")
+        if print_paths is True:
+            for path in paths:
+                print(path)
+        return paths
+    
+    
+    def _define_graph(self) -> None:
+        '''Add directed adges between observed variables to the DiGraph "G".'''
+        self.G = nx.DiGraph()
+        self.G.name = 'G'
+        for (parent, child) in self.b_net.arcs():
+            parent_name = self.b_net.variable(parent).name()  
+            child_name = self.b_net.variable(child).name()
+            self.G.add_edge(parent_name, child_name)
+        
+        '''Add directed adges from latent variables to the DiGraph "G".'''
+        self.G.add_edge("U_1", "V_1")
+        self.G.add_edge("U_1", "V_2")
+        self.G.add_edge("U_2", "V_8")
+        self.G.add_edge("U_2", "Y")
+        
+        return
+    
+    
+    def get_subgraph(self, which_graph: str) -> DiGraph:
+        self._define_graph()
+        G_subgraph = self.G
+        if which_graph == 'G_V_1_underscored': # the mutilated graph G with all arrows out of V_1 being removed 
+            G_subgraph.remove_edge('V_1', 'V_13')
+            G_subgraph.remove_edge('V_1', 'Y')
+            G_subgraph.remove_edge('V_1', 'V_2')
+            G_subgraph.remove_edge('V_1', 'V_8')
+            G_subgraph.name = 'G_V_1_underscored'
+            
+        elif which_graph == 'G_V_7_underscored': # the mutilated graph G with all arrows out of V_7 being removed 
+            G_subgraph.remove_edge('V_7', 'V_2')
+            G_subgraph.remove_edge('V_7', 'Y')
+            G_subgraph.name = 'G_V_7_underscored'
+            
+        elif which_graph == 'G': # the original graph G
+            pass
+        else:
+            raise ValueError('wrong value assigned to <which_graph> parameter ')
+        return G_subgraph
+    
+    
+    def check_independence(self, graph: DiGraph, A_nodes: set, B_nodes: set, conditioned_on: set, print_res: bool = True) -> bool:
+        '''
+        Uses the d-separation algo to check for conditional (or absolute) independence between sets of nodes. Params:
+        - graph: a networkx DiGraph object
+        - A_nodes: a python-set of variables
+        - B_nodes: another set of variables, so that independency is checked between the two sets
+        - conditioned_on: the set of known variables. For absolute independency checks, just give an empy set as argument, i.e. conditioned_on=set()
+        '''
+        cond_indep = nx.is_d_separator(graph, A_nodes, B_nodes, conditioned_on)
+        if print_res is True:
+            print("\n")
+            if len(conditioned_on) == 0:
+                print(f"{A_nodes} _|_ {B_nodes} in graph {graph.name} it is: {cond_indep}")
+            else:
+                print(f"{A_nodes} _|_ {B_nodes} | {conditioned_on} in graph {graph.name} it is: {cond_indep}")
+        return cond_indep
     
     
 
