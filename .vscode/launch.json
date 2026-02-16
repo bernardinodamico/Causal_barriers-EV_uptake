@@ -10,7 +10,10 @@
             "type": "debugpy",
             "request": "launch",
             "program": "${file}",
-            "console": "integratedTerminal",
+            "console": "internalConsole", //"integratedTerminal",
+            "internalConsoleOptions": "openOnSessionStart",
+            "redirectOutput": true,
+            "justMyCode": true,
             "env": {"PYTHONPATH": "${workspaceFolder}"}
         }
     ]
