@@ -131,7 +131,7 @@ class Plotter():
         ax.bar(b_income_interv, treatment_effects, bar_width, color="#49C5A2", edgecolor='black')
         
         ax.set_xticks(b_income_interv, ['', '', '', ''])
-        ax.set_ylabel("Treatment effect: " r"$\Delta_{TE}$" " (pp)", fontsize=14)
+        ax.set_ylabel("Treatment effect: " r"$\Delta_{TE,Inc.}$" " (pp)", fontsize=14)
         
         ax.set_ylim(-30, 20)
         
