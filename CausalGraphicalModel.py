@@ -96,11 +96,14 @@ class CausalGraphicalModel():
         return
     
     
-    def build(self) -> None:
+    def build(self, for_refutation: bool = False, dataset_for_refutation: DataFrame = False) -> None:
         self.set_Lp_smoothing(Lp_sm=0.00001)
         self.add_nodes()
         self.add_causal_edges()
-        self.learn_params(data=self.disctetised_ds)
+        if for_refutation is False:
+            self.learn_params(data=self.disctetised_ds)
+        else:
+            self.learn_params(data=dataset_for_refutation)
         self.add_latent_vars()
         return
     

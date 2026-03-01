@@ -1,6 +1,9 @@
 import pandas as pd
 import numpy as np
 import random
+from pathlib import Path
+from CausalGraphicalModel import CausalGraphicalModel
+import pyAgrum.causal as csl
 pd.option_context('display.max_rows', None)
 
 
@@ -11,6 +14,53 @@ def placebo_treatment_test(tot_samples: int) -> None:
     shuffled (placebo tretment). Then it uses these datasets to estimate the corresponding effect 
     on EV ownership (Y="Already own electric car/van") and saves these into a csv for further statistical analysis.
     '''
+    base_path = Path(r'C:/Causal_barriers-EV_uptake_local_code/Causal_barriers-EV_uptake/DATA')
+    csv_path = base_path / 'processed_dataset.csv'
+        
+    original_dataset = pd.read_csv(filepath_or_buffer=csv_path, sep=",")
+    shuffled_dataset = original_dataset.copy(deep=True)
     
+    
+    plecebo_treatmt_reslt = pd.DataFrame({'Random_seed': pd.Series(dtype='int'), 
+                                          'TE_placebo "Already own electric car/van" (pp)': pd.Series(dtype='float')})
+    
+    
+    for random_seed in range(1, tot_samples):
+        np.random.seed(random_seed)
+        shuffled_dataset['V_7'] = np.random.permutation(shuffled_dataset['V_7'].values)
+        
+        causal_grap_model = CausalGraphicalModel(dataset_name='processed_dataset.csv')
+        causal_grap_model.build(for_refutation=True, dataset_for_refutation=shuffled_dataset)
+        cm = causal_grap_model.c_model # the pyAgrum CausalModel object
+        
+        _, potential, _ = csl.causalImpact(cm, on='Y', doing='V_7', knowing={})
+    
+        arr = potential.toarray()
+        first_col = arr[:, 0]
+        
+        TE_placebo = (first_col[0]-first_col[1])*100 # the change in probability of the state "Already own electric car/van", measured in percentage points
+        
+        new_row = {'Random_seed': random_seed, 'TE_placebo "Already own electric car/van" (pp)': TE_placebo}
+        plecebo_treatmt_reslt = pd.concat([plecebo_treatmt_reslt, pd.DataFrame([new_row])], ignore_index=True)
+        plecebo_treatmt_reslt.to_csv(path_or_buf="DATA/REFUTATION_TEST_RESULTS/placebo_treatment_results.csv", index=False)
+    
+        print(f'Random seed {random_seed} out of {tot_samples}. TE_placebo "Already own electric car/van" = {TE_placebo} (pp)')
+        
     
     return
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+if __name__ == "__main__":
+    placebo_treatment_test(tot_samples=1000)
