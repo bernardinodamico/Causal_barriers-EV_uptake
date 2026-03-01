@@ -50,7 +50,12 @@ def placebo_treatment_test(tot_samples: int) -> None:
     return
 
 
-
+'''
+NOTE: fo the subsample test, use the following code:
+subsample_size = 0.4 # percentage of the original dataset
+    for random_seed in range(1, tot_samples):
+        subsample_dataset = subsample_dataset.sample(frac=subsample_size, random_state=random_seed)  
+'''
 
 
 
