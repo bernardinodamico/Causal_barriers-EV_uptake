@@ -58,8 +58,42 @@ subsample_size = 0.4 # percentage of the original dataset
 '''
 
 
-
-
+def data_subsample_test(tot_samples: int) -> None:
+    '''
+    The method generates a sample of training datasets where each dataset is a random subsample of the original training dataset. 
+    Then it uses these random subsample datasets to estimate the corresponding effect 
+    on EV ownership (Y="Already own electric car/van") and saves these into a csv for further statistical analysis.
+    '''
+    base_path = Path(r'C:/Causal_barriers-EV_uptake_local_code/Causal_barriers-EV_uptake/DATA')
+    csv_path = base_path / 'processed_dataset.csv'
+        
+    original_dataset = pd.read_csv(filepath_or_buffer=csv_path, sep=",")
+    
+    data_subsample_reslt = pd.DataFrame({'Random_seed': pd.Series(dtype='int'), 
+                                          'TE_subsample "Already own electric car/van" (pp)': pd.Series(dtype='float')})
+    
+    
+    subsample_size = 0.8 # fraction of the original dataset    
+    
+    for random_seed in range(1, tot_samples):
+        subsample_dataset = original_dataset.sample(frac=subsample_size, random_state=random_seed) 
+        
+        causal_grap_model = CausalGraphicalModel(dataset_name='processed_dataset.csv')
+        causal_grap_model.build(for_refutation=True, dataset_for_refutation=subsample_dataset)
+        cm = causal_grap_model.c_model # the pyAgrum CausalModel object
+        
+        _, potential, _ = csl.causalImpact(cm, on='Y', doing='V_7', knowing={})
+    
+        arr = potential.toarray()
+        first_col = arr[:, 0]
+    
+        TE_subsample = (first_col[0]-first_col[1])*100 # the change in probability of the state "Already own electric car/van", measured in percentage points
+        
+        new_row = {'Random_seed': random_seed, 'TE_subsample "Already own electric car/van" (pp)': TE_subsample}
+        data_subsample_reslt = pd.concat([data_subsample_reslt, pd.DataFrame([new_row])], ignore_index=True)
+        data_subsample_reslt.to_csv(path_or_buf="DATA/REFUTATION_TEST_RESULTS/subsample_treatment_results.csv", index=False)
+    
+        print(f'Random seed {random_seed} out of {tot_samples}. TE_subsample "Already own electric car/van" = {TE_subsample} (pp)')
 
 
 
@@ -68,4 +102,5 @@ subsample_size = 0.4 # percentage of the original dataset
 
 
 if __name__ == "__main__":
-    placebo_treatment_test(tot_samples=1000)
+    #placebo_treatment_test(tot_samples=1000)
+    data_subsample_test(tot_samples=1000)
