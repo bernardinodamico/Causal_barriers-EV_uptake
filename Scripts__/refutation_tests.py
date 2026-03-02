@@ -38,7 +38,7 @@ def placebo_treatment_test(tot_samples: int) -> None:
         arr = potential.toarray()
         first_col = arr[:, 0]
         
-        TE_placebo = (first_col[0]-first_col[1])*100 # the change in probability of the state "Already own electric car/van", measured in percentage points
+        TE_placebo = float((first_col[0]-first_col[1])*100) # the change in probability of the state "Already own electric car/van", measured in percentage points
         
         new_row = {'Random_seed': random_seed, 'TE_placebo "Already own electric car/van" (pp)': TE_placebo}
         plecebo_treatmt_reslt = pd.concat([plecebo_treatmt_reslt, pd.DataFrame([new_row])], ignore_index=True)
@@ -50,12 +50,6 @@ def placebo_treatment_test(tot_samples: int) -> None:
     return
 
 
-'''
-NOTE: fo the subsample test, use the following code:
-subsample_size = 0.4 # percentage of the original dataset
-    for random_seed in range(1, tot_samples):
-        subsample_dataset = subsample_dataset.sample(frac=subsample_size, random_state=random_seed)  
-'''
 
 
 def data_subsample_test(tot_samples: int) -> None:
@@ -87,7 +81,7 @@ def data_subsample_test(tot_samples: int) -> None:
         arr = potential.toarray()
         first_col = arr[:, 0]
     
-        TE_subsample = (first_col[0]-first_col[1])*100 # the change in probability of the state "Already own electric car/van", measured in percentage points
+        TE_subsample = float((first_col[0]-first_col[1])*100) # the change in probability of the state "Already own electric car/van", measured in percentage points
         
         new_row = {'Random_seed': random_seed, 'TE_subsample "Already own electric car/van" (pp)': TE_subsample}
         data_subsample_reslt = pd.concat([data_subsample_reslt, pd.DataFrame([new_row])], ignore_index=True)
@@ -102,5 +96,5 @@ def data_subsample_test(tot_samples: int) -> None:
 
 
 if __name__ == "__main__":
-    #placebo_treatment_test(tot_samples=1000)
+    placebo_treatment_test(tot_samples=1000)
     data_subsample_test(tot_samples=1000)
