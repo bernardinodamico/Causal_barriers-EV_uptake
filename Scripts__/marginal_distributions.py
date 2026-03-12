@@ -20,7 +20,7 @@ for var in variable_set:
     
     print(f"MARGINAL P({var}):")
     for i in range(0, len(var_states)):
-        string = f"{i} - {var_states[i]}; P({i}) = {round(var_arr_potential[i], 3)}"
+        string = f"{i} - {var_states[i]}; P({i}) = {round(var_arr_potential[i], 4)}"
         print(string)
     print("------------------")
     
