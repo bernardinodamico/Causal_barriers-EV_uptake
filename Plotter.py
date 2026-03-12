@@ -6,7 +6,6 @@ import pandas as pd
 from pandas import DataFrame
 import matplotlib.pyplot as plt
 import numpy as np
-import matplotlib.gridspec as gridspec
 
 
 class Plotter():
@@ -21,7 +20,7 @@ class Plotter():
         
         self._get_P_Y_do_V_7_potential() # interventional distribution P(EV | do(Parking provision))
         self._get_P_Y_given_V_7_potential() # observational distribution P(EV | Parking provision)
-        self._get_P_Y_given_V_1_potential() # 2-fold interventional distribution P(EV | do(Income))
+        self._get_P_Y_do_V_1_potential() # 2-fold interventional distribution P(EV | do(Income))
         return
     
     
@@ -40,7 +39,7 @@ class Plotter():
         return
     
     
-    def _get_P_Y_given_V_1_potential(self):
+    def _get_P_Y_do_V_1_potential(self):
         '''
         NOTE: it returns the causal potential with income var (V_1) as
         a two-fold {low-income; high-income} instead of 8-fold category, 
