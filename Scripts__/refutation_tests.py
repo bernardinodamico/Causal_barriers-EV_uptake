@@ -22,7 +22,8 @@ def placebo_treatment_test(tot_samples: int) -> None:
     
     
     plecebo_treatmt_reslt = pd.DataFrame({'Random_seed': pd.Series(dtype='int'), 
-                                          'TE_placebo "Already own electric car/van" (pp)': pd.Series(dtype='float')})
+                                          'TE_placebo "Already own electric car/van" (pp)': pd.Series(dtype='float'),
+                                         'TE_placeboNOtConsider "Not considering to buy one" (pp)': pd.Series(dtype='float')})
     
     
     for random_seed in range(1, tot_samples):
@@ -37,10 +38,14 @@ def placebo_treatment_test(tot_samples: int) -> None:
     
         arr = potential.toarray()
         first_col = arr[:, 0]
+        forth_col = arr[:, 3]
         
         TE_placebo = float((first_col[0]-first_col[1])*100) # the change in probability of the state "Already own electric car/van", measured in percentage points
+        TE_placeboNOtConsider = float((forth_col[0]-forth_col[1])*100) # the change in probability of the state "Not considering to buy one", measured in percentage points
         
-        new_row = {'Random_seed': random_seed, 'TE_placebo "Already own electric car/van" (pp)': TE_placebo}
+        new_row = {'Random_seed': random_seed, 
+                   'TE_placebo "Already own electric car/van" (pp)': TE_placebo,
+                   'TE_placeboNOtConsider "Not considering to buy one" (pp)': TE_placeboNOtConsider}
         plecebo_treatmt_reslt = pd.concat([plecebo_treatmt_reslt, pd.DataFrame([new_row])], ignore_index=True)
         plecebo_treatmt_reslt.to_csv(path_or_buf="DATA/REFUTATION_TEST_RESULTS/placebo_treatment_results.csv", index=False)
     
@@ -101,5 +106,5 @@ def data_subsample_test(tot_samples: int) -> None:
 
 
 if __name__ == "__main__":
-    #placebo_treatment_test(tot_samples=1000)
+    placebo_treatment_test(tot_samples=1000)
     data_subsample_test(tot_samples=1000)
