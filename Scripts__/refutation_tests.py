@@ -68,7 +68,7 @@ def data_subsample_test(tot_samples: int) -> None:
                                           'TE_subsampleNOtConsider "Not considering to buy one" (pp)': pd.Series(dtype='float')})
     
     
-    subsample_size = 1.0#0.8 # fraction of the original dataset    
+    subsample_size = 0.8 # fraction of the original dataset    
     
     for random_seed in range(1, tot_samples):
         subsample_dataset = original_dataset.sample(frac=subsample_size, random_state=random_seed) 
@@ -80,15 +80,15 @@ def data_subsample_test(tot_samples: int) -> None:
         _, potential, _ = csl.causalImpact(cm, on='Y', doing='V_7', knowing={})
     
         arr = potential.toarray()
-        print(potential, arr)
         first_col = arr[:, 0]
         forth_col = arr[:, 3]
-        print(forth_col)
     
         TE_subsample = float((first_col[0]-first_col[1])*100) # the change in probability of the state "Already own electric car/van", measured in percentage points
         TE_subsampleNOtConsider = float((forth_col[0]-forth_col[1])*100) # the change in probability of the state "Not considering to buy one", measured in percentage points
         
-        new_row = {'Random_seed': random_seed, 'TE_subsample "Already own electric car/van" (pp)': TE_subsample}
+        new_row = {'Random_seed': random_seed, 
+                   'TE_subsample "Already own electric car/van" (pp)': TE_subsample, 
+                   'TE_subsampleNOtConsider "Not considering to buy one" (pp)': TE_subsampleNOtConsider}
         data_subsample_reslt = pd.concat([data_subsample_reslt, pd.DataFrame([new_row])], ignore_index=True)
         data_subsample_reslt.to_csv(path_or_buf="DATA/REFUTATION_TEST_RESULTS/subsample_treatment_results.csv", index=False)
     
