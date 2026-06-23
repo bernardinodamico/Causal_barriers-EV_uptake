@@ -31,7 +31,9 @@ def gen_training_dataset(weighted_resampling: bool, parking_prov_folds: str, ten
     dp.fill_in_infrastruct_density()
     if weighted_resampling is True:
         dp.weighted_resampling(sample_size=int(len(dp.ds_obsrv_vars) * sample_multiplier))
-    dp.rename_reorder_vars()
+        dp.rename_reorder_vars()
+    else:
+        dp.rename_reorder_vars(keep_weights_column=True)
     
     combined_ds_obsrv_vars = dp.ds_obsrv_vars
     
@@ -53,11 +55,20 @@ def gen_training_dataset(weighted_resampling: bool, parking_prov_folds: str, ten
 
 
 if __name__ == "__main__":
-    gen_training_dataset(weighted_resampling=True, 
+    gen_training_dataset(weighted_resampling=True,
                          sample_multiplier=1.0, 
                          parking_prov_folds='2-fold', 
                          tenure_folds='3-fold', 
                          work_folds='2-fold',
                          EV_folds='4-fold',
                          dataset_name='processed_dataset'
+                         )
+    
+    gen_training_dataset(weighted_resampling=False,
+                         sample_multiplier=1.0, 
+                         parking_prov_folds='2-fold', 
+                         tenure_folds='3-fold', 
+                         work_folds='2-fold',
+                         EV_folds='4-fold',
+                         dataset_name='unweighted_dataset'
                          )

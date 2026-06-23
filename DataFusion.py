@@ -239,7 +239,7 @@ class DataFusion():
         return
    
     
-    def rename_reorder_vars(self) -> None:
+    def rename_reorder_vars(self, keep_weights_column: bool = False) -> None:
         
         #self.ds_obsrv_vars.drop(columns=['council'], inplace=True)
         
@@ -262,10 +262,12 @@ class DataFusion():
         }
         
         self.ds_obsrv_vars.rename(columns=column_name_mapping, inplace=True)
-        self.ds_obsrv_vars.drop(columns=['tsWghtP_n'], inplace=True)
         
-        
-        self.ds_obsrv_vars = self.ds_obsrv_vars[['Y', 'V_1', 'V_2', 'V_3', 'V_4', 'V_5', 'V_6', 'V_7', 'V_8', 'V_9', 'V_10', 'V_11', 'V_12', 'V_13', 'V_14']]
+        if keep_weights_column is True:
+            self.ds_obsrv_vars = self.ds_obsrv_vars[['Y', 'V_1', 'V_2', 'V_3', 'V_4', 'V_5', 'V_6', 'V_7', 'V_8', 'V_9', 'V_10', 'V_11', 'V_12', 'V_13', 'V_14', 'tsWghtP_n']]
+        else:
+            self.ds_obsrv_vars.drop(columns=['tsWghtP_n'], inplace=True)
+            self.ds_obsrv_vars = self.ds_obsrv_vars[['Y', 'V_1', 'V_2', 'V_3', 'V_4', 'V_5', 'V_6', 'V_7', 'V_8', 'V_9', 'V_10', 'V_11', 'V_12', 'V_13', 'V_14']]
         
         return
  

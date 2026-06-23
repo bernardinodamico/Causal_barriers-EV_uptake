@@ -7,6 +7,56 @@ import pyAgrum.causal as csl
 pd.option_context('display.max_rows', None)
 
 
+def bootstrap_test(tot_samples: int) -> None:
+    '''
+    The method generates a sample of training datasets, each resampled (with replacemnt) using 
+    selection probabilities proportional to the survey weight variable "tsWghtP" but using a different
+    random seed every time. Then it uses these datasets to estimate the corresponding effect 
+    on EV ownership (Y="Already own electric car/van") and saves these into a csv for further statistical analysis.
+    '''
+    base_path = Path(r'C:/Causal_barriers-EV_uptake_local_code/Causal_barriers-EV_uptake/DATA')
+    csv_path = base_path / 'unweighted_dataset.csv'
+        
+    original_dataset = pd.read_csv(filepath_or_buffer=csv_path, sep=",")
+    #reweighted_dataset = original_dataset.copy(deep=True)
+    
+    bootstrap_treatmt_reslt = pd.DataFrame({'Random_seed': pd.Series(dtype='int'), 
+                                    'TE_bootstrap "Already own electric car/van" (pp)': pd.Series(dtype='float'),
+                                    'TE_bootstrapNOtConsider "Not considering to buy one" (pp)': pd.Series(dtype='float')})
+    
+    
+    for random_seed in range(1, tot_samples):
+        print(random_seed)
+        reweighted_dataset = original_dataset.sample(n=int(len(original_dataset)), weights='tsWghtP_n', random_state=random_seed, axis=0, replace=True)
+        reweighted_dataset.drop(columns=['tsWghtP_n'], inplace=True)
+        
+        #print(reweighted_dataset)
+        
+        causal_grap_model = CausalGraphicalModel(dataset_name='processed_dataset.csv')
+        causal_grap_model.build(for_refutation=True, dataset_for_refutation=reweighted_dataset)
+        cm = causal_grap_model.c_model # the pyAgrum CausalModel object
+        
+        _, potential, _ = csl.causalImpact(cm, on='Y', doing='V_7', knowing={})
+        
+        arr = potential.toarray()
+        first_col = arr[:, 0]
+        forth_col = arr[:, 3]
+        
+        TE_bootstrap = float((first_col[0]-first_col[1])*100) # the change in probability of the state "Already own electric car/van", measured in percentage points
+        TE_bootstrapNOtConsider = float((forth_col[0]-forth_col[1])*100) # the change in probability of the state "Not considering to buy one", measured in percentage points
+        
+        new_row = {'Random_seed': random_seed, 
+                   'TE_bootstrap "Already own electric car/van" (pp)': TE_bootstrap,
+                   'TE_bootstrapNOtConsider "Not considering to buy one" (pp)': TE_bootstrapNOtConsider}
+        bootstrap_treatmt_reslt = pd.concat([bootstrap_treatmt_reslt, pd.DataFrame([new_row])], ignore_index=True)
+        bootstrap_treatmt_reslt.to_csv(path_or_buf="DATA/REFUTATION_TEST_RESULTS/bootstrap_treatment_results.csv", index=False)
+    
+        print(f'Random seed {random_seed} out of {tot_samples}. TE_bootstrap "Already own electric car/van" = {TE_bootstrap} (pp)')
+        
+        
+        
+    return
+
 
 def placebo_treatment_test(tot_samples: int) -> None:
     '''
@@ -23,7 +73,7 @@ def placebo_treatment_test(tot_samples: int) -> None:
     
     plecebo_treatmt_reslt = pd.DataFrame({'Random_seed': pd.Series(dtype='int'), 
                                           'TE_placebo "Already own electric car/van" (pp)': pd.Series(dtype='float'),
-                                         'TE_placeboNOtConsider "Not considering to buy one" (pp)': pd.Series(dtype='float')})
+                                          'TE_placeboNOtConsider "Not considering to buy one" (pp)': pd.Series(dtype='float')})
     
     
     for random_seed in range(1, tot_samples):
@@ -106,5 +156,6 @@ def data_subsample_test(tot_samples: int) -> None:
 
 
 if __name__ == "__main__":
-    placebo_treatment_test(tot_samples=1000)
-    data_subsample_test(tot_samples=1000)
+    #placebo_treatment_test(tot_samples=1000)
+    #data_subsample_test(tot_samples=1000)
+    bootstrap_test(tot_samples=1000)
