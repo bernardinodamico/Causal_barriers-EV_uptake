@@ -152,10 +152,9 @@ def data_subsample_test(tot_samples: int) -> None:
 
 
 
-
-
-
 if __name__ == "__main__":
-    #placebo_treatment_test(tot_samples=1000)
-    #data_subsample_test(tot_samples=1000)
+    placebo_treatment_test(tot_samples=1000)
+    data_subsample_test(tot_samples=1000)
     bootstrap_test(tot_samples=1000)
+    
+ 
