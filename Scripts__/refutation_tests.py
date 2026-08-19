@@ -150,11 +150,67 @@ def data_subsample_test(tot_samples: int) -> None:
         print(f'Random seed {random_seed} out of {tot_samples}. TE_subsample "Already own electric car/van" = {TE_subsample} (pp)')
 
 
+def check_overlap() -> None:
 
+    base_path = Path(
+        r"C:/Causal_barriers-EV_uptake_local_code/Causal_barriers-EV_uptake/DATA"
+    )
+    csv_path = base_path / "unweighted_dataset.csv"
+
+    original_dataset = pd.read_csv(filepath_or_buffer=csv_path, sep=",")
+
+    col_v7 = "V_7"
+    col_v8 = "V_8"
+    col_v9 = "V_9"
+
+    # Ensure V8 and V9 are treated as categorical to retain unobserved combinations
+    original_dataset[col_v8] = original_dataset[col_v8].astype("category")
+    original_dataset[col_v9] = original_dataset[col_v9].astype("category")
+
+    total_households = len(original_dataset)
+    total_theoretical_strata = 42
+
+    # Explicitly set observed=False to count unobserved strata without warnings
+    grouped = original_dataset.groupby([col_v8, col_v9], observed=False)
+    
+    # Explicitly set observed=False here as well to silence the FutureWarning
+    total_observed_strata = (
+        original_dataset.groupby([col_v8, col_v9], observed=False)[col_v7].count() > 0
+    ).sum()
+
+    failing_positivity_strata = 0
+    failing_positivity_households = 0
+    overlapping_strata_keys = []
+
+    # Iterate through each stratum to check V7 coverage
+    for stratum_key, stratum_df in grouped:
+        unique_v7_count = stratum_df[col_v7].nunique()
+        stratum_size = len(stratum_df)
+
+        # Violates positivity if fewer than 2 parking categories are present (0 or 1)
+        if unique_v7_count < 2:
+            failing_positivity_strata += 1
+            failing_positivity_households += stratum_size
+        else:
+            overlapping_strata_keys.append(stratum_key)
+
+    pct_failing_hh = (failing_positivity_households / total_households) * 100
+
+    print("=== EMPIRICAL POSITIVITY & OVERLAP SUMMARY ===")
+    print(f"Joint domain size (|V8| x |V9|): {total_theoretical_strata} theoretical strata")
+    print(f"[X] Total strata failing positivity (< 2 parking categories): {failing_positivity_strata} (out of {total_theoretical_strata})")
+    print(f"[Y%] Household units in non-overlapping strata: {failing_positivity_households} ({pct_failing_hh:.2f}%)\n")
+
+    return
+    
 
 if __name__ == "__main__":
-    placebo_treatment_test(tot_samples=1000)
-    data_subsample_test(tot_samples=1000)
-    bootstrap_test(tot_samples=1000)
+    #placebo_treatment_test(tot_samples=1000)
+    #data_subsample_test(tot_samples=1000)
+    #bootstrap_test(tot_samples=1000)
+    
+    check_overlap()
+    
+    
     
  
