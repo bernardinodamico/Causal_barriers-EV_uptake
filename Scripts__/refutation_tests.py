@@ -20,9 +20,14 @@ def bootstrap_test(tot_samples: int) -> None:
     original_dataset = pd.read_csv(filepath_or_buffer=csv_path, sep=",")
     #reweighted_dataset = original_dataset.copy(deep=True)
     
-    bootstrap_treatmt_reslt = pd.DataFrame({'Random_seed': pd.Series(dtype='int'), 
-                                    'TE_bootstrap "Already own electric car/van" (pp)': pd.Series(dtype='float'),
-                                    'TE_bootstrapNOtConsider "Not considering to buy one" (pp)': pd.Series(dtype='float')})
+    bootstrap_treatmt_reslt = pd.DataFrame({
+        'Random_seed': pd.Series(dtype='int'), 
+        'TE_bootstrap "Already own electric car/van" (pp)': pd.Series(dtype='float'),
+        'TE_bootstrapNOtConsider "Not considering to buy one" (pp)': pd.Series(dtype='float'),
+        'RR_bootstrap "Already own electric car/van"': pd.Series(dtype='float')  # Risk Ratio
+    })
+    
+    
     
     
     for random_seed in range(1, tot_samples):
@@ -45,13 +50,38 @@ def bootstrap_test(tot_samples: int) -> None:
         TE_bootstrap = float((first_col[0]-first_col[1])*100) # the change in probability of the state "Already own electric car/van", measured in percentage points
         TE_bootstrapNOtConsider = float((forth_col[0]-forth_col[1])*100) # the change in probability of the state "Not considering to buy one", measured in percentage points
         
-        new_row = {'Random_seed': random_seed, 
-                   'TE_bootstrap "Already own electric car/van" (pp)': TE_bootstrap,
-                   'TE_bootstrapNOtConsider "Not considering to buy one" (pp)': TE_bootstrapNOtConsider}
+
+        RR_bootstrap = float(first_col[0]) / float(first_col[1]) if float(first_col[1]) != 0 else np.nan #Compute the Risk Ratio (RR) for this replicate, with a safety check for division by zero
+        
+        new_row = {
+            'Random_seed': random_seed, 
+            'TE_bootstrap "Already own electric car/van" (pp)': TE_bootstrap,
+            'TE_bootstrapNOtConsider "Not considering to buy one" (pp)': TE_bootstrapNOtConsider,
+            'RR_bootstrap "Already own electric car/van"': RR_bootstrap  
+        }
+        
+        
         bootstrap_treatmt_reslt = pd.concat([bootstrap_treatmt_reslt, pd.DataFrame([new_row])], ignore_index=True)
         bootstrap_treatmt_reslt.to_csv(path_or_buf="DATA/REFUTATION_TEST_RESULTS/bootstrap_treatment_results.csv", index=False)
     
         print(f'Random seed {random_seed} out of {tot_samples}. TE_bootstrap "Already own electric car/van" = {TE_bootstrap} (pp)')
+        
+        
+    #Calculate the 1st percentile (lower limit of 99% CI) and print its E-value
+    if not bootstrap_treatmt_reslt.empty:
+        rr_series = bootstrap_treatmt_reslt['RR_bootstrap "Already own electric car/van"'].dropna()
+        
+        # 1st percentile (99% CI lower limit)
+        ll_99 = np.percentile(rr_series, 1.0)
+        e_value_99 = ll_99 + np.sqrt(ll_99 * (ll_99 - 1)) if ll_99 > 1 else 1.
+        
+        
+        print("\n" + "="*40)
+        print("BOOTSTRAP E-VALUE SENSITIVITY RESULTS")
+        print("="*40)
+        print(f"99% Lower Limit (1st percentile) RR: {ll_99:.4f}")
+        print(f"--> E-value for 99% Lower Limit:     {e_value_99:.4f}")
+        print("-"*40)
         
         
         
@@ -103,8 +133,6 @@ def placebo_treatment_test(tot_samples: int) -> None:
         
     
     return
-
-
 
 
 def data_subsample_test(tot_samples: int) -> None:
@@ -205,10 +233,9 @@ def check_overlap() -> None:
     
 
 if __name__ == "__main__":
-    #placebo_treatment_test(tot_samples=1000)
-    #data_subsample_test(tot_samples=1000)
-    #bootstrap_test(tot_samples=1000)
-    
+    placebo_treatment_test(tot_samples=1000)
+    data_subsample_test(tot_samples=1000)
+    bootstrap_test(tot_samples=1000)
     check_overlap()
     
     
