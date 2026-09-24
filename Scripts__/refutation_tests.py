@@ -178,12 +178,12 @@ def data_subsample_test(tot_samples: int) -> None:
         print(f'Random seed {random_seed} out of {tot_samples}. TE_subsample "Already own electric car/van" = {TE_subsample} (pp)')
 
 
-def check_overlap() -> None:
+def check_overlap(dataset_filename: str) -> None:
 
     base_path = Path(
         r"C:/Causal_barriers-EV_uptake_local_code/Causal_barriers-EV_uptake/DATA"
     )
-    csv_path = base_path / "unweighted_dataset.csv"
+    csv_path = base_path / dataset_filename  # "processed_dataset.csv" #"unweighted_dataset.csv"
 
     original_dataset = pd.read_csv(filepath_or_buffer=csv_path, sep=",")
 
@@ -225,18 +225,21 @@ def check_overlap() -> None:
     pct_failing_hh = (failing_positivity_households / total_households) * 100
 
     print("=== EMPIRICAL POSITIVITY & OVERLAP SUMMARY ===")
+    print(f"Dataset: {dataset_filename}")
     print(f"Joint domain size (|V8| x |V9|): {total_theoretical_strata} theoretical strata")
     print(f"[X] Total strata failing positivity (< 2 parking categories): {failing_positivity_strata} (out of {total_theoretical_strata})")
     print(f"[Y%] Household units in non-overlapping strata: {failing_positivity_households} ({pct_failing_hh:.2f}%)\n")
 
-    return
+    return 
     
 
 if __name__ == "__main__":
     placebo_treatment_test(tot_samples=1000)
     data_subsample_test(tot_samples=1000)
     bootstrap_test(tot_samples=1000)
-    check_overlap()
+    check_overlap(dataset_filename="unweighted_dataset.csv")
+    check_overlap(dataset_filename="processed_dataset.csv")
+    
     
     
     
